@@ -32,10 +32,10 @@ const FAQSection = () => {
   const [openIndex, setOpenIndex] = useState(0);
 
   return (
-    <section className="py-24 px-6 bg-[#0C0E12] relative overflow-hidden">
+    <section className="py-12 md:py-24 px-6 bg-[#0C0E12] relative overflow-hidden">
       <div className="container mx-auto max-w-6xl relative z-10">
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold font-[family-name:var(--font-roboto)]">
+          <h2 className="text-3xl md:text-5xl font-bold font-[family-name:var(--font-roboto)]">
             <span className="text-white block mb-2">Common questions</span>
             <span className="bg-gradient-to-br from-[#BB877B] from-50% to-[#7B5EED] text-transparent bg-clip-text">
               about us
@@ -44,7 +44,7 @@ const FAQSection = () => {
         </div>
 
         <div
-          className="relative rounded-[40px] px-8 py-6 md:px-10 md:py-8 xl:px-20 xl:py-12 overflow-hidden border border-[#2B303B80]"
+          className="relative rounded-[24px] md:rounded-[40px] px-4 py-8 md:px-10 md:py-8 xl:px-20 xl:py-12 overflow-hidden border border-[#2B303B80]"
           style={{
             backgroundImage: "url('/about.png')",
             backgroundSize: "cover",
@@ -76,7 +76,7 @@ const FAQSection = () => {
 
                 <div
                   className={`px-6 overflow-hidden transition-all duration-300 ease-in-out ${
-                    openIndex === index ? "max-h-40 pb-5" : "max-h-0"
+                    openIndex === index ? "max-h-[500px] pb-5" : "max-h-0"
                   }`}
                 >
                   <p className="text-[#E5E5E6] text-[16px] leading-relaxed font-[family-name:var(--font-inter)] font-light">

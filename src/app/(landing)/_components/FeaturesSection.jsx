@@ -48,7 +48,7 @@ const FeaturesSection = () => {
       <div className="container mx-auto max-w-7xl">
         {/* Section Header */}
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 font-[family-name:var(--font-roboto)]">
+          <h2 className="text-3xl md:text-5xl font-bold mb-4 font-[family-name:var(--font-roboto)]">
             <span className="text-white">HiFun Core </span>
             <span className="bg-gradient-to-br from-[#BB877B] from-20% to-[#7B5EED] text-transparent bg-clip-text">
               Features
@@ -64,7 +64,7 @@ const FeaturesSection = () => {
           {features.map((feature, index) => (
             <div
               key={index}
-              className="px-6 py-5 h-[190px] rounded-xl bg-gradient-to-br from-[#181B21] to-[#0F1115] border border-[#2B303B80] hover:border-white/[0.1] transition-colors group flex flex-col"
+              className="px-6 py-5 min-h-[190px] h-auto rounded-xl bg-gradient-to-br from-[#181B21] to-[#0F1115] border border-[#2B303B80] hover:border-white/[0.1] transition-colors group flex flex-col"
             >
               <div className="w-12 h-12 rounded-lg bg-[linear-gradient(135deg,rgba(255,178,0,0.2)_0%,rgba(123,94,237,0.2)_100%)] border border-[#FFB2004D] flex items-center justify-center mb-4 group-hover:border-[#FFB20080] transition-colors shrink-0">
                 {feature.icon}

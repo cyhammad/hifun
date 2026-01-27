@@ -4,14 +4,20 @@ import Image from "next/image";
 
 const HeroSection = () => {
   return (
-    <div className="h-screen min-h-[900px] w-full h-full flex flex-col items-center justify-center relative overflow-hidden text-white">
+    <div className="h-screen min-h-[600px] md:min-h-[900px] w-full h-full flex flex-col items-center justify-center relative overflow-hidden text-white">
       {/* Background/Glow Effects */}
-      <Image src="/main-bg.svg" width={1900} height={900} alt="Main Background" className="absolute top-0 left-0 w-full h-full object-cover" />
+      <Image
+        src="/main-bg.svg"
+        width={1900}
+        height={900}
+        alt="Main Background"
+        className="absolute top-0 left-0 w-full h-full object-cover"
+      />
 
       {/* Hero Section */}
-      <section className="flex flex-col items-center text-center relative z-10 w-full h-full pt-[107px]">
+      <section className="flex flex-col items-center text-center relative z-10 w-full h-full pt-28 md:pt-[107px]">
         {/* Logo */}
-        <div className="mb-15 md:mb-[113px]">
+        <div className="mb-10 md:mb-[113px]">
           <HeroLogo />
         </div>
 
