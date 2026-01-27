@@ -1,25 +1,26 @@
 import React from "react";
 import { HeroLogo, BadgeSparkles } from "./LandingIcons";
+import Image from "next/image";
 
 const HeroSection = () => {
   return (
-    <>
+    <div className="h-screen min-h-[900px] w-full h-full flex flex-col items-center justify-center relative overflow-hidden text-white">
       {/* Background/Glow Effects */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[60%] bg-[#6C5DD3] opacity-[0.15] blur-[140px] rounded-full pointer-events-none z-0"></div>
+      <Image src="/main-bg.svg" width={1900} height={900} alt="Main Background" className="absolute top-0 left-0 w-full h-full object-cover" />
 
       {/* Hero Section */}
-      <section className="flex flex-col items-center justify-center text-center relative z-10 w-full">
+      <section className="flex flex-col items-center text-center relative z-10 w-full h-full pt-[107px]">
         {/* Logo */}
-        <div className="mb-15 md:mb-28">
+        <div className="mb-15 md:mb-[113px]">
           <HeroLogo />
         </div>
 
         {/* Badge */}
         <div className="mb-8">
-          <div className="inline-flex h-fit w-fit items-center gap-2 px-5 py-2.5 rounded-full bg-[#1A1D21] border border-white/5 shadow-2xl backdrop-blur-sm">
+          <div className="inline-flex h-[38px] w-fit items-center gap-2 px-5 py-2.5 rounded-full bg-[#1A1D21] border border-white/5 shadow-2xl backdrop-blur-sm">
             <BadgeSparkles />
 
-            <span className="text-[14px] text-white font-extralight font-[family-name:var(--font-inter)]">
+            <span className="text-sm text-white font-extralight font-[family-name:var(--font-inter)]">
               Challenge-based social app
             </span>
           </div>
@@ -39,7 +40,7 @@ const HeroSection = () => {
           </p>
         </div>
       </section>
-    </>
+    </div>
   );
 };
 

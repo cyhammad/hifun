@@ -50,7 +50,7 @@ const FeaturesSection = () => {
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold mb-4 font-[family-name:var(--font-roboto)]">
             <span className="text-white">HiFun Core </span>
-            <span className="bg-[linear-gradient(105deg,#FFB300_0%,#7B5EED_100%)] text-transparent bg-clip-text">
+            <span className="bg-gradient-to-br from-[#BB877B] from-20% to-[#7B5EED] text-transparent bg-clip-text">
               Features
             </span>
           </h2>

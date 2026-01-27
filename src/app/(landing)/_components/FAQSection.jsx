@@ -37,14 +37,14 @@ const FAQSection = () => {
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold font-[family-name:var(--font-roboto)]">
             <span className="text-white block mb-2">Common questions</span>
-            <span className="bg-[linear-gradient(105deg,#FFB300_0%,#7B5EED_100%)] text-transparent bg-clip-text">
+            <span className="bg-gradient-to-br from-[#BB877B] from-50% to-[#7B5EED] text-transparent bg-clip-text">
               about us
             </span>
           </h2>
         </div>
 
         <div
-          className="relative rounded-[40px] p-8 md:p-12 lg:p-14 overflow-hidden border border-[#2B303B80]"
+          className="relative rounded-[40px] px-8 py-6 md:px-10 md:py-8 xl:px-20 xl:py-12 overflow-hidden border border-[#2B303B80]"
           style={{
             backgroundImage: "url('/about.png')",
             backgroundSize: "cover",
@@ -58,7 +58,7 @@ const FAQSection = () => {
             {faqs.map((faq, index) => (
               <div
                 key={index}
-                className="rounded-2xl border border-[#2B303B80] bg-[#1A1D21]/90 backdrop-blur-sm overflow-hidden transition-all duration-300"
+                className="rounded-[16px] border border-[#2B303B80] bg-[#2E2B31] backdrop-blur-sm overflow-hidden transition-all duration-300"
               >
                 <button
                   onClick={() => setOpenIndex(openIndex === index ? -1 : index)}
@@ -68,9 +68,9 @@ const FAQSection = () => {
                     {faq.question}
                   </span>
                   {openIndex === index ? (
-                    <ChevronUp className="w-5 h-5 text-slate-400 group-hover:text-white transition-colors" />
+                    <ChevronUp className="size-8 text-slate-400 group-hover:text-white transition-colors" />
                   ) : (
-                    <ChevronDown className="w-5 h-5 text-slate-400 group-hover:text-white transition-colors" />
+                    <ChevronDown className="size-8 text-slate-400 group-hover:text-white transition-colors" />
                   )}
                 </button>
 
@@ -79,7 +79,7 @@ const FAQSection = () => {
                     openIndex === index ? "max-h-40 pb-5" : "max-h-0"
                   }`}
                 >
-                  <p className="text-slate-400 text-[16px] leading-relaxed font-[family-name:var(--font-inter)] font-light">
+                  <p className="text-[#E5E5E6] text-[16px] leading-relaxed font-[family-name:var(--font-inter)] font-light">
                     {faq.answer}
                   </p>
                 </div>
