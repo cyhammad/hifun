@@ -8,7 +8,7 @@ import { MobileSidebar } from "./sidebar/DashboardSidebar";
 
 export default function DashboardTopbar() {
   return (
-    <header className="h-[72px] w-full bg-transparent border-b border-[#404040] flex items-center justify-between px-8 sticky top-0 z-40">
+    <header className="h-[72px] w-full bg-transparent border-b border-[#404040] flex items-center justify-between px-4 md:px-8 sticky top-0 z-40">
       <div className="flex items-center gap-4">
         {/* Mobile Trigger */}
         <MobileSidebar />

@@ -33,7 +33,7 @@ const HeroSection = () => {
         </div>
 
         <div className="container mx-auto max-w-5xl">
-          <h2 className="text-5xl md:text-7xl lg:text-8xl font-semibold mb-8 font-[family-name:var(--font-roboto)]">
+          <h2 className="text-4xl md:text-7xl lg:text-8xl font-semibold mb-8 font-[family-name:var(--font-roboto)]">
             <span className="text-white block">Discover. Join.</span>
             <span className="bg-[linear-gradient(97.93deg,#FFB300_0%,#7B5EED_100%)] text-transparent bg-clip-text">
               Complete Challenges.

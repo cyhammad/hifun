@@ -12,19 +12,13 @@ const KPICard = ({
   customIcon,
 }) => {
   return (
-    <div className="bg-[#080707] w-full h-[135px] rounded-[16px] p-[16px] flex flex-col justify-between border-[1.5px] border-[#404040]">
+    <div className="bg-[#080707] w-full h-[135px] rounded-[16px] p-[16px] flex flex-col justify-between border-[1.5px] border-[#404040] font-sans">
       <div className="flex items-start justify-between">
         <div className="flex flex-col gap-1">
-          <p
-            className="text-[#8C8C8C] text-[16px] font-medium mb-[6px]"
-            style={{ fontFamily: "var(--font-nunito-sans)" }}
-          >
+          <p className="text-[#8C8C8C] text-[16px] font-medium mb-[6px]">
             {title}
           </p>
-          <p
-            className="text-[32px] font-bold text-white leading-none"
-            style={{ fontFamily: "var(--font-nunito-sans)" }}
-          >
+          <p className="text-[32px] font-bold text-white leading-none">
             {value}
           </p>
         </div>
@@ -41,12 +35,7 @@ const KPICard = ({
       </div>
 
       <div className="flex items-center gap-1.5">
-        <span
-          className="text-white text-[14px] font-bold"
-          style={{ fontFamily: "var(--font-nunito-sans)" }}
-        >
-          {percentage}
-        </span>
+        <span className="text-white text-[14px] font-bold">{percentage}</span>
       </div>
     </div>
   );

@@ -20,6 +20,7 @@ import {
   LogoutIcon,
   MenuIcon,
 } from "@/components/icons/icons";
+import { ChatIcon } from "@/app/admin/chat/_components/ChatIcons";
 
 const menuItems = [
   {
@@ -38,6 +39,11 @@ const menuItems = [
     href: "/admin/disputes",
   },
   {
+    title: "Chat",
+    icon: ChatIcon,
+    href: "/admin/chat",
+  },
+  {
     title: "Analytics",
     icon: AnalyticsIcon,
     href: "/admin/analytics",
@@ -52,7 +58,7 @@ const menuItems = [
 // Reusable navigation component
 const SidebarNav = ({ currentPath, onNavigate }) => {
   return (
-    <div className="flex flex-col h-full justify-between w-full">
+    <div className="flex flex-col h-full justify-between w-full font-inter">
       <div className="flex flex-col w-full">
         {/* Logo Section */}
         <div className="mb-14 flex items-center justify-start ml-2">
@@ -136,7 +142,7 @@ export function MobileSidebar() {
       </SheetTrigger>
       <SheetContent
         side="left"
-        className="w-[300px] p-6 bg-[#080707] border-none"
+        className="w-[300px] p-6 bg-[#080707] border-none font-inter"
       >
         <VisuallyHidden.Root>
           <SheetTitle>Navigation Menu</SheetTitle>
@@ -152,7 +158,7 @@ export default function DashboardSidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="hidden lg:flex flex-col w-[340px] p-[24px] h-full bg-transparent border-r border-white/10 shrink-0 sticky top-0">
+    <aside className="hidden lg:flex flex-col w-[340px] p-[24px] h-full bg-transparent border-r border-white/10 shrink-0 sticky top-0 font-inter">
       <SidebarNav currentPath={pathname} />
     </aside>
   );

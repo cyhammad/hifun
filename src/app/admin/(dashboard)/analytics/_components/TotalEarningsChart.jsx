@@ -45,14 +45,9 @@ const chartConfig = {
 
 export function TotalEarningsChart() {
   return (
-    <div className="bg-[#080707] w-full min-w-[670px] h-[330px] rounded-[16px] p-[24px] border border-[#404040] shadow-2xl flex flex-col gap-2">
+    <div className="bg-[#080707] w-full min-w-[670px] h-[330px] rounded-[16px] p-[24px] border border-[#404040] shadow-2xl flex flex-col gap-2 font-sans">
       <div className="flex flex-col">
-        <h3
-          className="text-white text-[14px] font-normal"
-          style={{ fontFamily: "var(--font-nunito-sans)" }}
-        >
-          Total Earnings
-        </h3>
+        <h3 className="text-white text-[14px] font-normal">Total Earnings</h3>
       </div>
       <div className="flex-1 w-full relative">
         <ChartContainer config={chartConfig} className="h-full w-full">

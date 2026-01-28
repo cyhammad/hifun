@@ -45,14 +45,9 @@ const defaultUsers = [
 
 export function NewUsersTable({ title = "New Users", users = defaultUsers }) {
   return (
-    <div className="w-full h-fit flex flex-col gap-[24px] rounded-[16px] p-[24px] border border-[#404040]">
+    <div className="w-full h-fit flex flex-col gap-[24px] rounded-[16px] p-[24px] border border-[#404040] font-sans">
       <div className="flex items-center justify-between">
-        <h3
-          className="text-[24px] font-semibold text-white"
-          style={{ fontFamily: "var(--font-nunito-sans)" }}
-        >
-          {title}
-        </h3>
+        <h3 className="text-[24px] font-semibold text-white">{title}</h3>
         {/* We can make this button conditional or stick to the design. Providing a prop to hide it might be useful later. */}
         <button className="bg-[#582BB3] text-white px-6 py-2.5 rounded-[8px] text-sm font-medium hover:opacity-90 transition-opacity">
           View All

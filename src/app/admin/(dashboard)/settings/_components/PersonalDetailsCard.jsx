@@ -7,11 +7,11 @@ export function PersonalDetailsCard() {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
-    <div className="flex flex-col gap-6 flex-1">
+    <div className="flex flex-col gap-6 flex-1 font-roboto">
       {/* Title */}
       <h2
         className="text-white text-[24px] font-semibold"
-        style={{ fontFamily: "var(--font-nunito-sans)" }}
+        style={{ fontFamily: "var(--font-red-hat-display)" }}
       >
         Personal Details
       </h2>
@@ -23,12 +23,7 @@ export function PersonalDetailsCard() {
           {/* Name Field */}
           <div className="flex flex-col gap-2 min-w-[180px]">
             <span className="text-[#717171] text-[12px] font-normal">Name</span>
-            <span
-              className="text-white text-[16px] font-normal"
-              style={{ fontFamily: "var(--font-nunito-sans)" }}
-            >
-              John Doe
-            </span>
+            <span className="text-white text-[16px] font-normal">John Doe</span>
           </div>
 
           {/* Email Field */}
@@ -39,10 +34,7 @@ export function PersonalDetailsCard() {
                 Email
               </span>
             </div>
-            <span
-              className="text-white text-[16px] font-normal"
-              style={{ fontFamily: "var(--font-nunito-sans)" }}
-            >
+            <span className="text-white text-[16px] font-normal">
               abc@gmail.com
             </span>
           </div>
@@ -54,10 +46,7 @@ export function PersonalDetailsCard() {
             Password
           </span>
           <div className="flex items-center justify-between">
-            <span
-              className="text-white text-[16px] font-normal tracking-widest"
-              style={{ fontFamily: "var(--font-nunito-sans)" }}
-            >
+            <span className="text-white text-[16px] font-normal tracking-widest">
               {showPassword ? "mypassword123" : "••••••••••"}
             </span>
             <button
@@ -75,10 +64,7 @@ export function PersonalDetailsCard() {
       </div>
 
       {/* Edit Details Button */}
-      <button
-        className="w-fit px-8 h-[44px] bg-[#582BB3] hover:bg-[#7245f0] text-white font-medium text-[14px] rounded-[24px] transition-all active:scale-[0.98]"
-        style={{ fontFamily: "var(--font-nunito-sans)" }}
-      >
+      <button className="w-fit px-8 h-[44px] bg-[#582BB3] hover:bg-[#7245f0] text-white font-medium text-[14px] rounded-[24px] transition-all active:scale-[0.98]">
         Edit Details
       </button>
     </div>

@@ -34,11 +34,11 @@ const SignInPage = () => {
         {/* Provided Content Structure */}
         <div className="w-full">
           {/* Heading */}
-          <h1 className="text-[40px] font-bold text-[#FFFFFF] mb-8 text-center">
+          <h1 className="text-[40px] font-bold text-[#FFFFFF] mt-10 mb-2 text-center font-sans">
             Sign In
           </h1>
 
-          <h2 className="text-[24px] font-normal mb-4 text-left text-[#FAFAFA]">
+          <h2 className="text-[24px] font-normal mb-4 text-left text-[#FAFAFA] font-sans">
             Enter your details
           </h2>
 

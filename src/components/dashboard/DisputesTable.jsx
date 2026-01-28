@@ -46,14 +46,9 @@ const disputes = [
 
 export function DisputesTable({ title = "All Disputes", data = disputes }) {
   return (
-    <div className="w-full h-fit flex flex-col gap-[24px] rounded-[16px] p-[24px] border border-[#404040]">
+    <div className="w-full h-fit flex flex-col gap-[24px] rounded-[16px] p-[24px] border border-[#404040] font-sans">
       <div className="flex items-center justify-between">
-        <h3
-          className="text-[24px] font-semibold text-white"
-          style={{ fontFamily: "var(--font-nunito-sans)" }}
-        >
-          {title}
-        </h3>
+        <h3 className="text-[24px] font-semibold text-white">{title}</h3>
         {/* 'View All' button is not explicitly shown in the screenshot for disputes, but usually consistent. 
             However, screenshot shows just the table in a white container (which we removed). 
             We'll keep the button for consistency or remove if requested. */}

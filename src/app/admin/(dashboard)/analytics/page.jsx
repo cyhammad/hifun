@@ -13,7 +13,7 @@ const AnalyticsPage = () => {
       <div className="flex items-center justify-between">
         <h1
           className="text-[28px] font-bold text-white"
-          style={{ fontFamily: "var(--font-nunito-sans)" }}
+          style={{ fontFamily: "var(--font-bricolage-grotesque)" }}
         >
           Analytics
         </h1>

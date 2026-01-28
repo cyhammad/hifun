@@ -27,11 +27,8 @@ const topUsers = [
 
 export function TopUsersCard() {
   return (
-    <div className="bg-[#080707] w-full h-[330px] rounded-[16px] p-[24px] border border-[#404040] shadow-2xl flex flex-col gap-[24px]">
-      <h3
-        className="text-[#8C8C8C] text-[16px] font-normal text-center"
-        style={{ fontFamily: "var(--font-nunito-sans)" }}
-      >
+    <div className="bg-[#080707] w-full h-[330px] rounded-[16px] p-[24px] border border-[#404040] shadow-2xl flex flex-col gap-[24px] font-sans">
+      <h3 className="text-[#8C8C8C] text-[16px] font-normal text-center">
         Last Week Top 03 Users
       </h3>
 

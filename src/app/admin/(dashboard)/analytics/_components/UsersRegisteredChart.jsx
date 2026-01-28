@@ -1,4 +1,4 @@
-                             "use client";
+"use client";
 
 import React from "react";
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
@@ -33,12 +33,9 @@ const chartConfig = {
 
 export function UsersRegisteredChart() {
   return (
-    <div className="bg-[#080707] w-full h-[285px] rounded-[12px] pt-[20px] pr-[24px] pb-[24px] pl-[24px] border border-[#404040] shadow-2xl flex flex-col gap-[16px]">
+    <div className="bg-[#080707] w-full h-[285px] rounded-[12px] pt-[20px] pr-[24px] pb-[24px] pl-[24px] border border-[#404040] shadow-2xl flex flex-col gap-[16px] font-sans">
       <div className="flex flex-col">
-        <h3
-          className="text-[#ffffff] text-[16px] font-normal"
-          style={{ fontFamily: "var(--font-nunito-sans)" }}
-        >
+        <h3 className="text-[#ffffff] text-[16px] font-normal">
           Users Registered
         </h3>
       </div>
