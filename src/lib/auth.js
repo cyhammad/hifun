@@ -19,8 +19,8 @@ export async function getCurrentUser() {
         try {
             decodedClaims = await adminAuth.verifySessionCookie(sessionCookie, true);
         } catch (verifyError) {
-            // Wrong project (aud), expired, or invalid — return null (cookie can't be deleted in Server Component)
-            console.error("Auth session invalid:", verifyError?.message);
+            // Session expired, revoked, or invalid - this is normal lifecycle, not an error
+            // Return null to trigger redirect to sign-in page
             return null;
         }
 
@@ -28,11 +28,13 @@ export async function getCurrentUser() {
 
         let displayName = decodedClaims.name ?? null;
         let creationTime = null;
+        let photoURL = decodedClaims.picture ?? null;
 
         try {
             const userRecord = await adminAuth.getUser(uid);
             displayName = userRecord.displayName ?? displayName ?? null;
             creationTime = userRecord.metadata?.creationTime ?? null;
+            photoURL = userRecord.photoURL ?? photoURL ?? null;
         } catch {
             // use claims only if getUser fails
         }
@@ -43,6 +45,7 @@ export async function getCurrentUser() {
             emailVerified: decodedClaims.email_verified ?? false,
             displayName,
             creationTime,
+            photoURL,
         };
     } catch (error) {
         console.error("Auth error:", error);

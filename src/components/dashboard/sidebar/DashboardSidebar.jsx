@@ -53,6 +53,25 @@ const menuItems = [
 
 // Reusable navigation component
 const SidebarNav = ({ currentPath, onNavigate }) => {
+  const [loggingOut, setLoggingOut] = React.useState(false);
+
+  const handleLogout = async () => {
+    setLoggingOut(true);
+    try {
+      // Call logout API to clear cookies
+      await fetch("/api/admin/auth/logout", {
+        method: "POST",
+      });
+
+      // Redirect to sign-in page
+      window.location.href = "/admin/sign-in";
+    } catch (error) {
+      console.error("Logout failed:", error);
+      // Still redirect even if API fails
+      window.location.href = "/admin/sign-in";
+    }
+  };
+
   return (
     <div className="flex flex-col h-full justify-between w-full font-inter">
       <div className="flex flex-col w-full">
@@ -83,15 +102,15 @@ const SidebarNav = ({ currentPath, onNavigate }) => {
                 href={item.href}
                 onClick={onNavigate}
                 className={`flex items-center gap-3 w-full h-[52px] rounded-[12px] px-4 transition-all duration-200 group ${isActive
-                    ? "bg-[#582BB3] text-white shadow-md"
-                    : "text-[#8C8C8C] hover:bg-white/5 hover:text-white"
+                  ? "bg-[#582BB3] text-white shadow-md"
+                  : "text-[#8C8C8C] hover:bg-white/5 hover:text-white"
                   }`}
               >
                 <div className="w-6 h-6 flex items-center justify-center">
                   <Icon
                     className={`w-5 h-5 ${isActive
-                        ? "text-white"
-                        : "text-[#8C8C8C] group-hover:text-white"
+                      ? "text-white"
+                      : "text-[#8C8C8C] group-hover:text-white"
                       }`}
                   />
                 </div>
@@ -110,13 +129,18 @@ const SidebarNav = ({ currentPath, onNavigate }) => {
       <div className="w-full">
         <div className="border-t border-white/10 mb-6 w-full" />
         <button
-          onClick={() => (window.location.href = "/admin/sign-in")}
-          className="flex items-center gap-3 w-full h-[52px] px-4 text-[#B0B0B0] hover:text-white hover:bg-white/5 rounded-[16px] transition-all duration-200 group"
+          onClick={handleLogout}
+          disabled={loggingOut}
+          className="flex items-center gap-3 w-full h-[52px] px-4 text-[#B0B0B0] hover:text-white hover:bg-white/5 rounded-[16px] transition-all duration-200 group disabled:opacity-50"
         >
           <div className="w-6 h-6 flex items-center justify-center">
-            <LogoutIcon className="w-5 h-5 text-[#B0B0B0] group-hover:text-white" />
+            {loggingOut ? (
+              <div className="w-5 h-5 border-2 border-[#B0B0B0] border-t-transparent rounded-full animate-spin" />
+            ) : (
+              <LogoutIcon className="w-5 h-5 text-[#B0B0B0] group-hover:text-white" />
+            )}
           </div>
-          <span className="font-medium text-[16px]">Logout</span>
+          <span className="font-medium text-[16px]">{loggingOut ? "Logging out..." : "Logout"}</span>
         </button>
       </div>
     </div>

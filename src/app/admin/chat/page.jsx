@@ -8,8 +8,16 @@ import {
   GalleryIcon,
   DoubleCheckIcon,
 } from "./_components/ChatIcons";
-import { db } from "@/lib/firebase";
-import { collection, query, orderBy, onSnapshot, addDoc, serverTimestamp } from "firebase/firestore";
+import { db, storage } from "@/lib/firebase";
+import { collection, query, orderBy, onSnapshot, addDoc, serverTimestamp, doc, getDoc } from "firebase/firestore";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { X } from "lucide-react";
 
 const ChatContent = () => {
   const router = useRouter();
@@ -22,6 +30,19 @@ const ChatContent = () => {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(true);
   const messagesEndRef = useRef(null);
+  const fileInputRef = useRef(null);
+
+  // Image upload states
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [selectedImagePreview, setSelectedImagePreview] = useState(null);
+  const [uploadingImage, setUploadingImage] = useState(false);
+
+  // Image modal states
+  const [previewModalOpen, setPreviewModalOpen] = useState(false);
+  const [previewModalImage, setPreviewModalImage] = useState(null);
+
+  // Allowed image types
+  const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml'];
 
   // Helper to get timestamp in millis
   const getTime = (t) => {
@@ -47,27 +68,43 @@ const ChatContent = () => {
   }, [allMessages]);
 
   const [currentAdminId, setCurrentAdminId] = useState(null);
+  const [adminAvatar, setAdminAvatar] = useState("/chat-avatar-user.png");
+  const [recipientAvatar, setRecipientAvatar] = useState("/chat-avatar-alice.png");
 
-  // Fetch current admin ID for conversation logic
+  // Fetch current admin ID and avatar
   useEffect(() => {
-    // We can fetch via API or assume we have it. Let's fetch session info or pass it.
-    // For now, let's fetch session via a lightweight API call or assume client-side auth state if available.
-    // Since this is "admin", we can fetch /api/auth/me or similar.
-    // Or simpler: let the first message send determine it? No, we need to LISTEN.
-    // Let's create a quick way to get my ID. Actually, we can get it from a server component wrapper or context.
-    // For simplicity in this `suspense` client component, let's fetch it.
-
-    // Better: use a server action to get UID? Or reuse an existing auth hook if present.
-    // Let's fetch from a new endpoint or use existing auth API.
-    // Assuming we don't have a ready hook, let's fetch session.
-
     fetch("/api/admin/auth/me").then(res => {
       if (res.ok) return res.json();
       return null;
     }).then(data => {
-      if (data?.uid) setCurrentAdminId(data.uid);
+      if (data?.uid) {
+        setCurrentAdminId(data.uid);
+        if (data.photoURL) setAdminAvatar(data.photoURL);
+      }
     });
   }, []);
+
+  // Fetch recipient avatar
+  useEffect(() => {
+    if (!userId) return;
+
+    const fetchRecipient = async () => {
+      try {
+        // Try fetching from users collection
+        const userDoc = await getDoc(doc(db, "users", userId));
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          // Check various possible avatar fields
+          const avatar = userData.photoURL || userData.avatar || userData.profileImage || "/chat-avatar-alice.png";
+          setRecipientAvatar(avatar);
+        }
+      } catch (error) {
+        console.error("Error fetching recipient avatar:", error);
+      }
+    };
+
+    fetchRecipient();
+  }, [userId]);
 
   // Listen for real-time messages
   useEffect(() => {
@@ -95,47 +132,117 @@ const ChatContent = () => {
     return () => unsubscribe();
   }, [userId, currentAdminId]);
 
-  const handleSendMessage = async () => {
-    if (!input.trim() || !userId) return;
+  // Handle image selection
+  const handleImageSelect = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
 
-    const contentToUse = input;
-    setInput(""); // Clear immediately
+    // Validate file type
+    if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+      alert("Please select a valid image file (JPEG, PNG, GIF, WebP, or SVG)");
+      e.target.value = "";
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      alert("Image size should be less than 5MB");
+      e.target.value = "";
+      return;
+    }
+
+    setSelectedImage(file);
+    // Create preview URL
+    const previewUrl = URL.createObjectURL(file);
+    setSelectedImagePreview(previewUrl);
+    e.target.value = ""; // Reset input for re-selection
+  };
+
+  // Remove selected image
+  const handleRemoveImage = () => {
+    if (selectedImagePreview) {
+      URL.revokeObjectURL(selectedImagePreview);
+    }
+    setSelectedImage(null);
+    setSelectedImagePreview(null);
+  };
+
+  // Upload image to Firebase Storage
+  const uploadImageToStorage = async (file) => {
+    const timestamp = Date.now();
+    const fileName = `chat_images/${currentAdminId}_${timestamp}_${file.name}`;
+    const storageRef = ref(storage, fileName);
+
+    await uploadBytes(storageRef, file);
+    const downloadURL = await getDownloadURL(storageRef);
+    return downloadURL;
+  };
+
+  const handleSendMessage = async () => {
+    // Allow sending if there's text OR image
+    if ((!input.trim() && !selectedImage) || !userId) return;
+
+    const contentToUse = input.trim();
+    const imageToUpload = selectedImage;
+    const imagePreviewUrl = selectedImagePreview;
+
+    // Clear inputs immediately
+    setInput("");
+    handleRemoveImage();
+
+    // Determine message type
+    let messageType = "text";
+    if (imageToUpload && contentToUse) {
+      messageType = "image_text";
+    } else if (imageToUpload) {
+      messageType = "image";
+    }
 
     // Create optimistic message
     const tempId = "temp-" + Date.now();
     const optimisticMsg = {
       id: tempId,
-      content: contentToUse,
+      content: contentToUse || "",
       senderId: currentAdminId,
       timestamp: new Date(),
-      type: "text",
+      type: messageType,
       pending: true,
-      read: false
+      read: false,
+      imageUrl: imagePreviewUrl || null // Use local preview for optimistic UI
     };
 
     setPendingMessages(prev => [...prev, optimisticMsg]);
+    setUploadingImage(!!imageToUpload);
 
     try {
-      // Optimistic update (optional, relying on fast Firestore sync here)
-      // Call Server API to send message securely (and potentially handle server-side logic like notifications)
+      let imageUrl = null;
+
+      // Upload image if present
+      if (imageToUpload) {
+        imageUrl = await uploadImageToStorage(imageToUpload);
+      }
+
+      // Call Server API to send message
       const res = await fetch("/api/admin/chat/send", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           recipientId: userId,
-          content: contentToUse,
-          type: "text" // Default type
+          content: contentToUse || (imageUrl ? "📷 Image" : ""),
+          type: messageType,
+          imageUrl: imageUrl
         }),
       });
 
       if (res.ok) {
-        // Remove specific pending message once sent
         setPendingMessages(prev => prev.filter(m => m.id !== tempId));
       } else {
         console.error("Failed to send message");
       }
     } catch (error) {
-      console.error("Error calling send API:", error);
+      console.error("Error sending message:", error);
+    } finally {
+      setUploadingImage(false);
     }
   };
 
@@ -147,7 +254,7 @@ const ChatContent = () => {
   };
 
   return (
-    <div className="fixed inset-0 z-[9999] flex flex-col font-sans p-4 md:p-8 overflow-hidden bg-black/90 backdrop-blur-md">
+    <div className="fixed inset-0 z-10 flex flex-col font-sans p-4 md:p-8 overflow-hidden bg-black/90 backdrop-blur-md">
       {/* Background Image */}
       <Image
         src="/login.png"
@@ -171,7 +278,7 @@ const ChatContent = () => {
         <div className="p-4 md:p-6 flex items-center gap-4 border-b border-white/5">
           <div className="w-[48px] h-[48px] rounded-full overflow-hidden relative border border-white/10">
             <Image
-              src="/chat-avatar-alice.png" // Should ideally fetch real avatar
+              src={recipientAvatar}
               alt={userName}
               fill
               className="object-cover"
@@ -225,7 +332,7 @@ const ChatContent = () => {
                 {!isMe && (
                   <div className="w-[36px] h-[36px] rounded-full overflow-hidden relative shrink-0">
                     <Image
-                      src="/chat-avatar-alice.png" // Placeholder
+                      src={recipientAvatar}
                       alt="Avatar"
                       fill
                       className="object-cover"
@@ -247,19 +354,46 @@ const ChatContent = () => {
                   )}
 
                   <div
-                    className={`px-5 py-3 rounded-[24px] ${isMe
+                    className={`rounded-[24px] ${isMe
                       ? "bg-[#582BB3] text-white rounded-br-none"
                       : "bg-[#262626] text-white rounded-bl-none"
-                      } text-[15px] leading-relaxed shadow-sm max-w-[650px] broke-words whitespace-pre-wrap ${msg.pending ? 'opacity-70' : ''}`}
+                      } shadow-sm max-w-[650px] ${msg.pending ? 'opacity-70' : ''} overflow-hidden`}
                   >
-                    {msg.content}
+                    {/* Image Display */}
+                    {msg.imageUrl && (
+                      <div
+                        className="cursor-pointer"
+                        onClick={() => {
+                          setPreviewModalImage(msg.imageUrl);
+                          setPreviewModalOpen(true);
+                        }}
+                      >
+                        <img
+                          src={msg.imageUrl}
+                          alt="Shared image"
+                          className="max-w-[300px] max-h-[200px] object-cover rounded-t-[24px] hover:opacity-90 transition-opacity"
+                        />
+                      </div>
+                    )}
+
+                    {/* Text Content */}
+                    {msg.content && msg.type !== "image" && (
+                      <div className={`px-5 py-3 text-[15px] leading-relaxed break-words whitespace-pre-wrap`}>
+                        {msg.content}
+                      </div>
+                    )}
+
+                    {/* Image-only message padding */}
+                    {msg.type === "image" && !msg.content && (
+                      <div className="h-1"></div>
+                    )}
                   </div>
                 </div>
 
                 {isMe && (
                   <div className="w-[36px] h-[36px] rounded-full overflow-hidden relative shrink-0 border border-white/10">
                     <Image
-                      src="/chat-avatar-user.png"
+                      src={adminAvatar}
                       alt="Self"
                       fill
                       className="object-cover"
@@ -274,8 +408,43 @@ const ChatContent = () => {
 
         {/* Input Area */}
         <div className="p-4 md:p-6 border-t border-white/5">
-          <div className="bg-[#1A1A1A] h-[60px] rounded-full flex items-center px-4 md:px-6 gap-4 w-full border border-white/10 focus-within:border-[#582BB3] transition-colors">
-            <button className="text-[#FFBD1D] hover:scale-110 transition-transform shrink-0 p-2">
+          {/* Hidden file input */}
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleImageSelect}
+            accept="image/jpeg,image/png,image/gif,image/webp,image/svg+xml"
+            className="hidden"
+          />
+
+          {/* Image Preview */}
+          {selectedImagePreview && (
+            <div className="mb-3 flex items-center gap-2">
+              <div className="relative inline-block">
+                <img
+                  src={selectedImagePreview}
+                  alt="Selected image preview"
+                  className="h-16 w-16 object-cover rounded-lg border border-white/20"
+                />
+                <button
+                  onClick={handleRemoveImage}
+                  className="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-1 transition-colors"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              </div>
+              <span className="text-white/60 text-sm">
+                {selectedImage?.name}
+              </span>
+            </div>
+          )}
+
+          <div className={`bg-[#1A1A1A] ${selectedImagePreview ? 'h-[60px]' : 'h-[60px]'} rounded-full flex items-center px-4 md:px-6 gap-4 w-full border border-white/10 focus-within:border-[#582BB3] transition-colors`}>
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              className="text-[#FFBD1D] hover:scale-110 transition-transform shrink-0 p-2"
+              title="Attach image"
+            >
               <GalleryIcon className="w-[20px] h-[20px]" />
             </button>
             <input
@@ -283,19 +452,42 @@ const ChatContent = () => {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder={`Message ${userName}...`}
+              placeholder={selectedImagePreview ? "Add a caption (optional)..." : `Message ${userName}...`}
               className="flex-1 bg-transparent text-white outline-none placeholder:text-[#666666] text-[16px] font-sans h-full"
             />
             <button
               onClick={handleSendMessage}
-              disabled={!input.trim()}
+              disabled={(!input.trim() && !selectedImage) || uploadingImage}
               className="text-[#FFBD1D] hover:scale-110 transition-transform shrink-0 p-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              title="Send message"
             >
-              <SendIcon className="w-[20px] h-[20px]" />
+              {uploadingImage ? (
+                <div className="w-[20px] h-[20px] border-2 border-[#FFBD1D] border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <SendIcon className="w-[20px] h-[20px]" />
+              )}
             </button>
           </div>
         </div>
       </div>
+
+      {/* Image Preview Modal */}
+      <Dialog open={previewModalOpen} onOpenChange={setPreviewModalOpen}>
+        <DialogContent className="sm:max-w-[90vw] md:max-w-[80vw] lg:max-w-[70vw] p-0 bg-black/95 border-white/10">
+          <DialogHeader className="hidden">
+            <DialogTitle>Media Preview</DialogTitle>
+          </DialogHeader>
+          <div className="relative flex items-center justify-center min-h-[50vh] max-h-[90vh] p-4">
+            {previewModalImage && (
+              <img
+                src={previewModalImage}
+                alt="Full size preview"
+                className="max-w-full max-h-[85vh] object-contain rounded-lg"
+              />
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

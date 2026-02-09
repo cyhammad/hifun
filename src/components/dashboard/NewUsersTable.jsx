@@ -10,6 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useParams, usePathname, useRouter } from "next/navigation";
 
 const defaultUsers = [
   {
@@ -79,13 +80,20 @@ export function NewUsersTable({ title = "New Users", users = defaultUsers }) {
     return pages;
   };
 
+  const router = useRouter();
+  const pathname = usePathname();
+
   return (
     <div className="w-full h-fit flex flex-col gap-[24px] rounded-[16px] p-[24px] border border-[#404040] font-sans">
       <div className="flex items-center justify-between">
         <h3 className="text-[24px] font-semibold text-white">{title}</h3>
-        <button className="bg-[#582BB3] text-white px-6 py-2.5 rounded-[8px] text-sm font-medium hover:opacity-90 transition-opacity">
-          View All
-        </button>
+        {
+          pathname !== "/admin/users" ? (
+            <button onClick={() => router.push("/admin/users")} className="bg-[#582BB3] text-white px-6 py-2.5 rounded-[8px] text-sm font-medium hover:opacity-90 transition-opacity">
+              View All
+            </button>
+          ) : null
+        }
       </div>
 
       <div className="overflow-hidden rounded-[16px] border border-[#404040]">
@@ -164,8 +172,8 @@ export function NewUsersTable({ title = "New Users", users = defaultUsers }) {
                   key={number}
                   onClick={() => goToPage(number)}
                   className={`min-w-[40px] h-[40px] rounded-[8px] text-sm font-medium transition-colors ${currentPage === number
-                      ? "bg-[#582BB3] text-white"
-                      : "text-[#D9D9D9] hover:bg-white/5"
+                    ? "bg-[#582BB3] text-white"
+                    : "text-[#D9D9D9] hover:bg-white/5"
                     }`}
                 >
                   {number}

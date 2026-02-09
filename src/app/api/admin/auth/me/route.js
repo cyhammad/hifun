@@ -17,7 +17,8 @@ export async function GET() {
         return NextResponse.json({
             uid: decodedClaims.uid,
             email: decodedClaims.email,
-            name: decodedClaims.name || "Admin"
+            name: decodedClaims.name || "Admin",
+            photoURL: decodedClaims.picture || null
         });
 
     } catch (error) {
