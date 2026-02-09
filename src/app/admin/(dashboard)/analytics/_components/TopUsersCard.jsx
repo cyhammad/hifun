@@ -8,34 +8,36 @@ const topUsers = [
     rank: 2,
     username: "@craig_love",
     challenges: 23,
-    avatar: "/user1.png",
+    avatar: "/user-3.png",
   },
   {
     rank: 1,
     username: "@craig_love",
     challenges: 44,
-    avatar: "/user2.png",
+    avatar: "/user-1.png",
     active: true,
   },
   {
     rank: 3,
     username: "@craig_love",
     challenges: 14,
-    avatar: "/user3.png",
+    avatar: "/user-2.png",
   },
 ];
 
 export function TopUsersCard() {
   return (
-    <div className="bg-[#080707] w-full h-[330px] rounded-[16px] p-[24px] border border-[#404040] shadow-2xl flex flex-col gap-[24px] font-sans">
-      <h3 className="text-[#8C8C8C] text-[16px] font-normal text-center">
+    <div className="w-full h-[350px] rounded-[16px] pt-4 border border-[#404040] flex flex-col font-sans">
+      <h3 className="text-white text-[18px] font-normal text-center">
         Last Week Top 03 Users
       </h3>
 
-      <div className="flex flex-1 items-end justify-between px-2 gap-2">
+      <div className="grid grid-cols-[49fr_77fr_47fr] flex-1 items-end">
         {/* Rank 2 */}
-        <div className="flex flex-col items-center gap-2 flex-1 relative h-[180px] justify-end">
-          <div className="w-14 h-14 rounded-full border-[3px] border-[#582BB3] overflow-hidden relative mb-2">
+        <div className="flex flex-col items-center justify-end pb-6 gap-3 flex-1 relative h-[200px]"
+          style={{ background: "linear-gradient(180deg, #080707 0%, rgba(179, 125, 43, 0.1) 100%)" }}
+        >
+          <div className="w-[70px] h-[70px] rounded-full border-[3px] border-[#582BB3] overflow-hidden relative shadow-[0_0_15px_rgba(88,43,179,0.3)] z-10 bg-black">
             <Image
               src={topUsers[0].avatar}
               alt="User"
@@ -43,15 +45,15 @@ export function TopUsersCard() {
               className="object-cover"
             />
           </div>
-          <div className="bg-[#080707] border border-[#404040] rounded-t-[12px] w-full h-[100px] flex flex-col items-center p-3 gap-1">
-            <span className="text-white text-[12px] font-bold">
+          <div className="flex flex-col items-center gap-1 mb-2">
+            <span className="text-white text-[14px]">
               {topUsers[0].username}
             </span>
-            <div className="text-center flex flex-col">
-              <span className="text-[#FFBD1D] text-[10px] font-bold">
+            <div className="text-center flex flex-col text-[#FFBD1D] text-[12px] leading-snug">
+              <span className="font-bold">
                 {topUsers[0].challenges} Challenges
               </span>
-              <span className="text-[#FFBD1D] text-[10px] font-bold">
+              <span className="font-bold">
                 Completed
               </span>
             </div>
@@ -59,37 +61,37 @@ export function TopUsersCard() {
         </div>
 
         {/* Rank 1 */}
-        <div className="flex flex-col items-center gap-2 flex-1 relative h-[240px] justify-end">
-          {/* Crown */}
-          <div className="absolute top-0 w-8 h-8 z-10">
-            <svg
-              viewBox="0 0 24 24"
-              fill="#FFBD1D"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path d="M5 16L3 5L8.5 10L12 4L15.5 10L21 5L19 16H5Z" />
-              <circle cx="12" cy="19" r="2" />
-            </svg>
+        <div
+          className="flex flex-col items-center justify-end pb-6 gap-3 flex-1 relative h-[260px]"
+          style={{
+            background: "linear-gradient(180deg, #080707 0%, rgba(179, 125, 43, 0.1) 100%)"
+          }}
+        >
+          {/* Crown & Avatar Wrapper */}
+          <div className="relative mt-auto">
+            <div className="absolute -top-8 left-1/2 -translate-x-1/2 w-[42px] h-[42px] z-20">
+              <Image src="/crown.png" alt="Crown" fill className="object-contain" />
+            </div>
+
+            <div className="w-[86px] h-[86px] rounded-full border-[4px] border-[#FFBD1D] overflow-hidden relative shadow-[0_0_20px_rgba(255,189,29,0.4)] z-10 bg-black">
+              <Image
+                src={topUsers[1].avatar}
+                alt="User"
+                fill
+                className="object-cover"
+              />
+            </div>
           </div>
 
-          <div className="w-20 h-20 rounded-full border-[4px] border-[#FFBD1D] overflow-hidden relative mb-2 z-10 shadow-[0_0_20px_rgba(255,189,29,0.3)]">
-            <Image
-              src={topUsers[1].avatar}
-              alt="User"
-              fill
-              className="object-cover"
-            />
-          </div>
-
-          <div className="bg-gradient-to-b from-[#1A1A1A] to-[#080707] border-x border-t border-[#FFBD1D]/30 rounded-t-[16px] w-full h-[150px] flex flex-col items-center p-4 gap-2 shadow-2xl">
-            <span className="text-white text-[14px] font-bold mt-4">
+          <div className="flex flex-col items-center gap-1 mb-2">
+            <span className="text-white text-[16px]">
               {topUsers[1].username}
             </span>
-            <div className="text-center flex flex-col">
-              <span className="text-[#FFBD1D] text-[12px] font-bold">
+            <div className="text-center flex flex-col leading-snug">
+              <span className="text-[#FFBD1D] text-[13px]">
                 {topUsers[1].challenges} Challenges
               </span>
-              <span className="text-[#FFBD1D] text-[12px] font-bold">
+              <span className="text-[#FFBD1D] text-[13px]">
                 Completed
               </span>
             </div>
@@ -97,8 +99,10 @@ export function TopUsersCard() {
         </div>
 
         {/* Rank 3 */}
-        <div className="flex flex-col items-center gap-2 flex-1 relative h-[160px] justify-end">
-          <div className="w-12 h-12 rounded-full border-[2px] border-[#404040] overflow-hidden relative mb-2">
+        <div className="flex flex-col items-center justify-end pb-6 gap-3 flex-1 relative h-[160px]"
+          style={{ background: "linear-gradient(180deg, #080707 0%, rgba(179, 125, 43, 0.1) 100%)" }}
+        >
+          <div className="w-[50px] h-[50px] rounded-full border-[2px] border-[#404040] overflow-hidden relative shadow-[0_0_10px_rgba(64,64,64,0.2)] z-10 bg-black opacity-90">
             <Image
               src={topUsers[2].avatar}
               alt="User"
@@ -106,15 +110,15 @@ export function TopUsersCard() {
               className="object-cover"
             />
           </div>
-          <div className="bg-[#080707] border border-[#404040] rounded-t-[12px] w-full h-[80px] flex flex-col items-center p-2 gap-1 opacity-80">
-            <span className="text-white text-[11px] font-bold">
+          <div className="flex flex-col items-center gap-1 mb-2">
+            <span className="text-white text-[13px]">
               {topUsers[2].username}
             </span>
-            <div className="text-center flex flex-col">
-              <span className="text-[#FFBD1D] text-[9px] font-bold">
+            <div className="text-center flex flex-col leading-snug">
+              <span className="text-[#FFBD1D] text-[11px]">
                 {topUsers[2].challenges} Challenges
               </span>
-              <span className="text-[#FFBD1D] text-[9px] font-bold">
+              <span className="text-[#FFBD1D] text-[11px]">
                 Completed
               </span>
             </div>

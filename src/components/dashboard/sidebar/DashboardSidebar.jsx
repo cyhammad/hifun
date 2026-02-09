@@ -38,11 +38,7 @@ const menuItems = [
     icon: DisputesIcon,
     href: "/admin/disputes",
   },
-  {
-    title: "Chat",
-    icon: ChatIcon,
-    href: "/admin/chat",
-  },
+
   {
     title: "Analytics",
     icon: AnalyticsIcon,
@@ -86,19 +82,17 @@ const SidebarNav = ({ currentPath, onNavigate }) => {
                 key={item.title}
                 href={item.href}
                 onClick={onNavigate}
-                className={`flex items-center gap-3 w-full h-[52px] rounded-[12px] px-4 transition-all duration-200 group ${
-                  isActive
+                className={`flex items-center gap-3 w-full h-[52px] rounded-[12px] px-4 transition-all duration-200 group ${isActive
                     ? "bg-[#582BB3] text-white shadow-md"
                     : "text-[#8C8C8C] hover:bg-white/5 hover:text-white"
-                }`}
+                  }`}
               >
                 <div className="w-6 h-6 flex items-center justify-center">
                   <Icon
-                    className={`w-5 h-5 ${
-                      isActive
+                    className={`w-5 h-5 ${isActive
                         ? "text-white"
                         : "text-[#8C8C8C] group-hover:text-white"
-                    }`}
+                      }`}
                   />
                 </div>
                 <span
@@ -147,7 +141,7 @@ export function MobileSidebar() {
         <VisuallyHidden.Root>
           <SheetTitle>Navigation Menu</SheetTitle>
         </VisuallyHidden.Root>
-        <SidebarNav currentPath={pathname} onNavigate={() => {}} />
+        <SidebarNav currentPath={pathname} onNavigate={() => { }} />
       </SheetContent>
     </Sheet>
   );
