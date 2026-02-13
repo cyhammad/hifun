@@ -46,9 +46,24 @@ export async function POST(request) {
             }
         }
 
+        // 3. Update Firestore 'admin' collection
+        try {
+            const { adminDb } = await import("@/lib/firebase-admin");
+            await adminDb.collection("admin").doc(uid).set({
+                uid: uid,
+                email: ADMIN_EMAIL,
+                displayName: ADMIN_DISPLAY_NAME,
+                role: "admin",
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+            }, { merge: true });
+        } catch (dbError) {
+            console.error("Failed to sync seed to Firestore:", dbError);
+        }
+
         return NextResponse.json({
             success: true,
-            message: "Admin user ready",
+            message: "Admin user ready and seeded in 'admin' collection",
             email: ADMIN_EMAIL,
             uid,
         });

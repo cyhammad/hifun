@@ -45,6 +45,18 @@ export async function POST(request) {
 
         await adminAuth.updateUser(adminId, updateData);
 
+        // 4. Sync with Firestore 'admin' collection
+        try {
+            const { adminDb } = await import("@/lib/firebase-admin");
+            await adminDb.collection("admin").doc(adminId).set({
+                ...updateData,
+                updatedAt: new Date().toISOString()
+            }, { merge: true });
+        } catch (dbError) {
+            console.error("Failed to sync profile update to Firestore:", dbError);
+            // We don't fail the whole request because the Auth update succeeded
+        }
+
         return NextResponse.json({ success: true });
 
     } catch (error) {

@@ -38,7 +38,7 @@ export async function POST(request) {
         // Save admin details in users collection with auth UID as document ID
         try {
             const userRecord = await adminAuth.getUser(decodedToken.uid);
-            await adminDb.collection("users").doc(decodedToken.uid).set(
+            await adminDb.collection("admin").doc(decodedToken.uid).set(
                 {
                     uid: decodedToken.uid,
                     email: decodedToken.email || null,

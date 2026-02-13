@@ -52,27 +52,48 @@ async function seed() {
   });
 
   const adminAuth = getAuth();
+  const { getFirestore } = require("firebase-admin/firestore");
+  const adminDb = getFirestore();
 
   try {
-    const existing = await adminAuth.getUserByEmail(ADMIN_EMAIL);
-    await adminAuth.updateUser(existing.uid, {
-      password: ADMIN_PASSWORD,
-      displayName: ADMIN_DISPLAY_NAME,
-    });
-    console.log("Admin user updated:", ADMIN_EMAIL);
-  } catch (err) {
-    if (err.code === "auth/user-not-found") {
-      const user = await adminAuth.createUser({
-        email: ADMIN_EMAIL,
+    let uid;
+    try {
+      const existing = await adminAuth.getUserByEmail(ADMIN_EMAIL);
+      uid = existing.uid;
+      await adminAuth.updateUser(uid, {
         password: ADMIN_PASSWORD,
         displayName: ADMIN_DISPLAY_NAME,
-        emailVerified: true,
       });
-      console.log("Admin user created:", ADMIN_EMAIL, "(uid:", user.uid + ")");
-    } else {
-      console.error("Seed error:", err.message);
-      process.exit(1);
+      console.log("Admin user Auth record updated:", ADMIN_EMAIL);
+    } catch (err) {
+      if (err.code === "auth/user-not-found") {
+        const user = await adminAuth.createUser({
+          email: ADMIN_EMAIL,
+          password: ADMIN_PASSWORD,
+          displayName: ADMIN_DISPLAY_NAME,
+          emailVerified: true,
+        });
+        uid = user.uid;
+        console.log("Admin user Auth record created:", ADMIN_EMAIL, "(uid:", uid + ")");
+      } else {
+        throw err;
+      }
     }
+
+    // Update Firestore 'admin' collection
+    await adminDb.collection("admin").doc(uid).set({
+      uid: uid,
+      email: ADMIN_EMAIL,
+      displayName: ADMIN_DISPLAY_NAME,
+      role: "admin",
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    }, { merge: true });
+    console.log("Admin Firestore document updated in 'admin' collection.");
+
+  } catch (err) {
+    console.error("Seed error:", err.message);
+    process.exit(1);
   }
   process.exit(0);
 }
