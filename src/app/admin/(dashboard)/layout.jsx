@@ -1,6 +1,7 @@
 import Image from "next/image";
 import DashboardSidebar from "@/components/dashboard/sidebar/DashboardSidebar";
 import DashboardTopbar from "@/components/dashboard/DashboardTopbar";
+import NotificationProvider from "@/components/admin/NotificationProvider";
 import {
   Bricolage_Grotesque,
   Nunito_Sans,
@@ -35,6 +36,8 @@ const AdminDashboardLayout = ({ children }) => {
         className="object-cover pointer-events-none -z-10"
         priority
       />
+
+      <NotificationProvider />
 
       {/* Sidebar - Make transparent/glass to see bg or keep white as per design? User said 'sidebar is transparent' earlier */}
       <div className="relative z-10 flex h-full w-full">

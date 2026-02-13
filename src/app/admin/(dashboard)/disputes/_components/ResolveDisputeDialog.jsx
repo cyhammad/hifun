@@ -47,7 +47,7 @@ export function ResolveDisputeDialog({ trigger, dispute }) {
 
       const payload = {
         disputeId: dispute.id,
-        status: "Resolved",
+        status: "resolved", // Lowercase to match enum
         winnerId: decision.participantId || null,
         inFavourOf: decision.participantName || "Unknown"
       };

@@ -56,6 +56,7 @@ async function getDisputes() {
 
       return {
         ...dispute,
+        status: ["unknown", "pending", "resolved"].includes((dispute.status || "").toLowerCase()) ? dispute.status.toLowerCase() : "unknown",
         name: submitter.name || "Unknown User",
         email: submitter.email || "No Email",
         submittedOn: "Unknown",

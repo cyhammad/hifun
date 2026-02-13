@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import {
   Dialog,
   DialogContent,
@@ -60,6 +61,7 @@ function MediaPreviewModal({ open, onClose, mediaUrl, isVideo }) {
 }
 
 export function DisputeDetailsDialog({ trigger, user: dispute }) {
+  const router = useRouter();
   const [proofData, setProofData] = useState(null);
   const [loadingProof, setLoadingProof] = useState(false);
   const [mediaModalOpen, setMediaModalOpen] = useState(false);
@@ -97,7 +99,7 @@ export function DisputeDetailsDialog({ trigger, user: dispute }) {
 
   const handleChat = (user) => {
     if (!user.uid) return;
-    window.location.href = `/admin/chat?name=${encodeURIComponent(user.name || "User")}&id=${user.uid}`;
+    router.push(`/admin/chat?name=${encodeURIComponent(user.name || "User")}&id=${user.uid}&disputeId=${dispute.id}`);
   };
 
   const handleMediaClick = () => {
@@ -267,11 +269,11 @@ export function DisputeDetailsDialog({ trigger, user: dispute }) {
           <ResolveDisputeDialog
             trigger={
               <button
-                disabled={dispute.status === "Resolved"}
+                disabled={dispute.status === "resolved"}
                 className="w-full h-[52px] bg-[#582BB3] hover:bg-[#7245f0] disabled:bg-white/10 disabled:text-[#717171] disabled:cursor-not-allowed text-white font-light text-[15px] rounded-[8px] mt-4 transition-all active:scale-[0.98]"
                 style={{ fontFamily: "var(--font-nunito-sans)" }}
               >
-                {dispute.status === "Resolved" ? "Resolved" : "Resolve Dispute"}
+                {dispute.status === "resolved" ? "Resolved" : "Resolve Dispute"}
               </button>
             }
             dispute={dispute}

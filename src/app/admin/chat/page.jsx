@@ -9,7 +9,7 @@ import {
   DoubleCheckIcon,
 } from "./_components/ChatIcons";
 import { db, storage } from "@/lib/firebase";
-import { collection, query, orderBy, onSnapshot, addDoc, serverTimestamp, doc, getDoc } from "firebase/firestore";
+import { collection, query, orderBy, onSnapshot, doc, getDoc, setDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import {
   Dialog,
@@ -24,6 +24,7 @@ const ChatContent = () => {
   const searchParams = useSearchParams();
   const userName = searchParams.get("name") || "Alice Smith";
   const userId = searchParams.get("id"); // recipientId
+  const disputeId = searchParams.get("disputeId");
 
   const [messages, setMessages] = useState([]);
   const [pendingMessages, setPendingMessages] = useState([]);
@@ -44,12 +45,13 @@ const ChatContent = () => {
   // Allowed image types
   const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml'];
 
-  // Helper to get timestamp in millis
+  // Helper to get timestamp as unix seconds for sorting
   const getTime = (t) => {
     if (!t) return 0;
-    if (t.toMillis) return t.toMillis();
-    if (t instanceof Date) return t.getTime();
-    return new Date(t).getTime();
+    if (typeof t === "number") return t; // already unix seconds
+    if (t.toMillis) return Math.floor(t.toMillis() / 1000); // Firestore Timestamp
+    if (t instanceof Date) return Math.floor(t.getTime() / 1000);
+    return Math.floor(new Date(t).getTime() / 1000);
   };
 
   // Combined messages for display, filtering duplicates
@@ -111,8 +113,23 @@ const ChatContent = () => {
     if (!userId || !currentAdminId) return;
 
     // Construct Conversation ID
-    const participants = [currentAdminId, userId].sort();
-    const conversationId = participants.join("_");
+    let conversationId;
+
+    if (disputeId) {
+      conversationId = disputeId;
+      // Ensure conversation document exists for dispute
+      const convoRef = doc(db, "conversations", conversationId);
+      // We don't await this to keep UI responsive, but we log errors
+      setDoc(convoRef, {
+        participants: [currentAdminId, userId],
+        type: 'dispute',
+        disputeId: disputeId,
+        updatedAt: Date.now() // Update timestamp to keep it fresh
+      }, { merge: true }).catch(err => console.error("Error creating/updating dispute conversation:", err));
+    } else {
+      const participants = [currentAdminId, userId].sort();
+      conversationId = participants.join("_");
+    }
 
     // Listen to subcollection: conversations/{conversationId}/messages
     const q = query(
@@ -130,7 +147,7 @@ const ChatContent = () => {
     });
 
     return () => unsubscribe();
-  }, [userId, currentAdminId]);
+  }, [userId, currentAdminId, disputeId]);
 
   // Handle image selection
   const handleImageSelect = (e) => {
@@ -198,13 +215,13 @@ const ChatContent = () => {
       messageType = "image";
     }
 
-    // Create optimistic message
+    // Create optimistic message with unix seconds timestamp
     const tempId = "temp-" + Date.now();
     const optimisticMsg = {
       id: tempId,
       content: contentToUse || "",
       senderId: currentAdminId,
-      timestamp: new Date(),
+      timestamp: Math.floor(Date.now() / 1000),
       type: messageType,
       pending: true,
       read: false,
@@ -230,7 +247,8 @@ const ChatContent = () => {
           recipientId: userId,
           content: contentToUse || (imageUrl ? "📷 Image" : ""),
           type: messageType,
-          imageUrl: imageUrl
+          imageUrl: imageUrl,
+          disputeId: disputeId
         }),
       });
 

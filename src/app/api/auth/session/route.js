@@ -1,5 +1,5 @@
 import { cookies } from "next/headers";
-import { adminAuth } from "@/lib/firebase-admin";
+import { adminAuth, adminDb } from "@/lib/firebase-admin";
 import { NextResponse } from "next/server";
 
 // Session cookie expiration (5 days)
@@ -34,6 +34,26 @@ export async function POST(request) {
             sameSite: "lax",
             path: "/",
         });
+
+        // Save admin details in users collection with auth UID as document ID
+        try {
+            const userRecord = await adminAuth.getUser(decodedToken.uid);
+            await adminDb.collection("users").doc(decodedToken.uid).set(
+                {
+                    uid: decodedToken.uid,
+                    email: decodedToken.email || null,
+                    displayName: userRecord.displayName || null,
+                    photoURL: userRecord.photoURL || null,
+                    role: "admin",
+                    lastLoginAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString(),
+                },
+                { merge: true }
+            );
+        } catch (dbError) {
+            // Don't block login if Firestore write fails
+            console.error("Failed to save admin user to Firestore:", dbError);
+        }
 
         return NextResponse.json({
             success: true,

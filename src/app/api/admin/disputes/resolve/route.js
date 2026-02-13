@@ -13,6 +13,14 @@ export async function POST(request) {
             );
         }
 
+        const validStatuses = ["unknown", "pending", "resolved"];
+        if (!validStatuses.includes(status)) {
+            return NextResponse.json(
+                { error: "Invalid status type" },
+                { status: 400 }
+            );
+        }
+
         const updateData = {
             status,
             winnerId: winnerId || null,
