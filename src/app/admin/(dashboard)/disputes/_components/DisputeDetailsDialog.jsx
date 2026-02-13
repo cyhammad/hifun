@@ -8,6 +8,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Play, MessageCircle, X, Loader2, ImageIcon, Video } from "lucide-react";
@@ -15,45 +16,30 @@ import { ResolveDisputeDialog } from "./ResolveDisputeDialog";
 import { db } from "@/lib/firebase";
 import { doc, getDoc } from "firebase/firestore";
 
-// Helper to determine if URL is a video
-function isVideoUrl(url, type) {
-  if (type?.toLowerCase().includes('video')) return true;
-  if (type?.toLowerCase().includes('image')) return false;
 
-  if (!url) return false;
-  const videoExtensions = ['.mp4', '.webm', '.ogg', '.mov', '.avi', '.mkv'];
-  const lowerUrl = url.toLowerCase();
-  return videoExtensions.some(ext => lowerUrl.includes(ext)) || lowerUrl.includes('video');
-}
 
 // Media Preview Modal Component
-function MediaPreviewModal({ open, onClose, mediaUrl, isVideo }) {
+function MediaPreviewModal({ open, onClose, mediaUrl }) {
   if (!open) return null;
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[90vw] md:max-w-[80vw] lg:max-w-[70vw] max-h-[90vh] p-0 bg-black/95 border-white/10 overflow-hidden">
-        <DialogHeader className="hidden">
-          <DialogTitle>Media Preview</DialogTitle>
+        <DialogHeader>
+          <DialogTitle className="hidden">Media Preview</DialogTitle>
+          <DialogDescription className="hidden">Full size view of the submitted proof media.</DialogDescription>
         </DialogHeader>
         <div className="relative flex items-center justify-center min-h-[50vh] max-h-[85vh] p-4">
-          {isVideo ? (
-            <video
-              src={mediaUrl}
-              controls
-              autoPlay
-              className="max-w-full max-h-[80vh] rounded-lg"
-              style={{ objectFit: 'contain' }}
-            >
-              Your browser does not support the video tag.
-            </video>
-          ) : (
-            <img
-              src={mediaUrl}
-              alt="Proof media"
-              className="max-w-full max-h-[80vh] object-contain rounded-lg"
-            />
-          )}
+          <video
+            src={mediaUrl}
+            controls
+            autoPlay
+            playsInline
+            className="max-w-full max-h-[80vh] rounded-lg"
+            style={{ objectFit: 'contain' }}
+          >
+            Your browser does not support the video tag.
+          </video>
         </div>
       </DialogContent>
     </Dialog>
@@ -74,15 +60,51 @@ export function DisputeDetailsDialog({ trigger, user: dispute }) {
     const fetchProof = async () => {
       setLoadingProof(true);
       try {
-        const proofDoc = await getDoc(doc(db, "submitted_proofs", dispute.id));
+        let finalProofData = null;
+
+        // 1. Try fetching from submitted_proofs
+        let proofDoc = await getDoc(doc(db, "submitted_proofs", dispute.id));
+        if (!proofDoc.exists() && dispute.challengeID) {
+          proofDoc = await getDoc(doc(db, "submitted_proofs", dispute.challengeID));
+        }
+
         if (proofDoc.exists()) {
-          console.log("Proof data:", proofDoc.data());
-          setProofData(proofDoc.data());
+          finalProofData = proofDoc.data();
+          console.log("Found proof in submitted_proofs:", finalProofData);
+        }
+
+        // 2. If we found a postID in proof, or have a challengeID, check the challenges collection
+        // This is often where the actual media URL from the user's screenshot is stored
+        const targetChallengeId = finalProofData?.postID || dispute.challengeID || dispute.id;
+        if (targetChallengeId) {
+          const challengeDoc = await getDoc(doc(db, "challenges", targetChallengeId));
+          if (challengeDoc.exists()) {
+            const challengeData = challengeDoc.data();
+            console.log("Found supporting data in challenges:", challengeData);
+
+            // Merge data, prioritizing challenge media if proof media looks like a placeholder
+            // or if proof media is missing
+            const isPlaceholder = (url) => url?.includes('BigBuckBunny') || url?.includes('sample-video');
+
+            if (!finalProofData || isPlaceholder(finalProofData.mediaURL) || isPlaceholder(finalProofData.mediaUrl)) {
+              finalProofData = {
+                ...finalProofData,
+                ...challengeData,
+                // Ensure IDs don't get overwritten incorrectly
+                id: finalProofData?.id || challengeDoc.id
+              };
+            }
+          }
+        }
+
+        if (finalProofData) {
+          setProofData(finalProofData);
         } else {
+          console.log("No proof or challenge data found for:", dispute.id);
           setProofData(null);
         }
       } catch (error) {
-        console.error("Error fetching proof:", error);
+        console.error("Error fetching proof/challenge data:", error);
         setProofData(null);
       } finally {
         setLoadingProof(false);
@@ -94,8 +116,8 @@ export function DisputeDetailsDialog({ trigger, user: dispute }) {
 
   if (!dispute) return null;
 
-  const mediaUrl = proofData?.mediaUrl || proofData?.mediaURL || null;
-  const isVideo = isVideoUrl(mediaUrl, proofData?.type || proofData?.fileType);
+  const mediaUrl = proofData?.mediaUrl || proofData?.mediaURL || proofData?.videoUrl || proofData?.videoURL ||
+    dispute?.mediaUrl || dispute?.mediaURL || dispute?.videoUrl || dispute?.videoURL || null;
 
   const handleChat = (user) => {
     if (!user.uid) return;
@@ -122,6 +144,9 @@ export function DisputeDetailsDialog({ trigger, user: dispute }) {
               <DialogTitle className="text-[24px] font-medium text-white">
                 {dispute.title || "Dispute Details"}
               </DialogTitle>
+              <DialogDescription className="hidden">
+                Details and evidence for dispute {dispute.id}
+              </DialogDescription>
               <span className="text-xs text-[#717171]">ID: {dispute.challengeID || dispute.id || "N/A"}</span>
             </div>
           </DialogHeader>
@@ -147,68 +172,47 @@ export function DisputeDetailsDialog({ trigger, user: dispute }) {
                 <>
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent z-10" />
 
-                  {/* Play/View button overlay */}
+                  {/* Play button overlay */}
                   <div className="absolute inset-0 flex items-center justify-center z-20">
                     <div className="w-12 h-12 bg-[#582BB3] rounded-full flex items-center justify-center group-hover:bg-[#7245f0] transition-colors">
-                      {isVideo ? (
-                        <Play className="w-5 h-5 text-white fill-white ml-1" />
-                      ) : (
-                        <ImageIcon className="w-5 h-5 text-white" />
-                      )}
+                      <Play className="w-5 h-5 text-white fill-white ml-1" />
                     </div>
                   </div>
 
                   {/* Media type badge */}
                   <div className="absolute top-2 right-2 z-20 px-2 py-1 rounded bg-black/60 text-white text-xs flex items-center gap-1">
-                    {isVideo ? (
-                      <>
-                        <Video className="w-3 h-3" />
-                        Video
-                      </>
-                    ) : (
-                      <>
-                        <ImageIcon className="w-3 h-3" />
-                        Image
-                      </>
-                    )}
+                    <Video className="w-3 h-3" />
+                    Video
                   </div>
 
-                  {/* Thumbnail */}
-                  {isVideo ? (
-                    proofData?.thumbnail ? (
-                      <img
-                        src={proofData.thumbnail}
-                        alt="Video thumbnail"
-                        className="w-full h-full object-cover opacity-70"
-                      />
-                    ) : (
-                      <video
-                        src={`${mediaUrl}#t=0.1`}
-                        className="w-full h-full object-cover opacity-70"
-                        muted
-                        preload="metadata"
-                        playsInline
-                      />
-                    )
-                  ) : (
+                  {/* Thumbnail / Video Preview */}
+                  {proofData?.thumbnail ? (
                     <img
-                      src={mediaUrl}
-                      alt="Proof"
+                      src={proofData.thumbnail}
+                      alt="Video thumbnail"
                       className="w-full h-full object-cover opacity-70"
+                    />
+                  ) : (
+                    <video
+                      src={`${mediaUrl}#t=0.1`}
+                      className="w-full h-full object-cover opacity-70"
+                      muted
+                      preload="metadata"
+                      playsInline
                     />
                   )}
                 </>
               ) : (
                 <div className="absolute inset-0 flex flex-col items-center justify-center text-[#717171]">
-                  <ImageIcon className="w-10 h-10 mb-2 opacity-50" />
-                  <span className="text-sm">No proof submitted</span>
+                  <Video className="w-10 h-10 mb-2 opacity-50" />
+                  <span className="text-sm">No video proof submitted</span>
                 </div>
               )}
             </div>
 
             {mediaUrl && (
               <p className="text-xs text-[#717171] text-center">
-                Click to view {isVideo ? "video" : "image"} in full size
+                Click to view video in full size
               </p>
             )}
           </div>
@@ -286,7 +290,6 @@ export function DisputeDetailsDialog({ trigger, user: dispute }) {
         open={mediaModalOpen}
         onClose={() => setMediaModalOpen(false)}
         mediaUrl={mediaUrl}
-        isVideo={isVideo}
       />
     </>
   );

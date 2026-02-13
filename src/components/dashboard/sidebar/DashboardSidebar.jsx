@@ -82,7 +82,7 @@ const SidebarNav = ({ currentPath, onNavigate }) => {
             alt="HiFun"
             width={120}
             height={40}
-            className="object-contain select-none"
+            className="object-contain select-none h-auto"
             priority
           />
         </div>
