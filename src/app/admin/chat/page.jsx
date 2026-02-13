@@ -45,23 +45,23 @@ const ChatContent = () => {
   // Allowed image types
   const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml'];
 
-  // Helper to get timestamp as unix seconds for sorting
+  // Helper to get timestamp for sorting
   const getTime = (t) => {
     if (!t) return 0;
-    if (typeof t === "number") return t; // already unix seconds
-    if (t.toMillis) return Math.floor(t.toMillis() / 1000); // Firestore Timestamp
-    if (t instanceof Date) return Math.floor(t.getTime() / 1000);
-    return Math.floor(new Date(t).getTime() / 1000);
+    if (typeof t === "number") return t; // ms or s
+    if (t.toMillis) return t.toMillis(); // Firestore Timestamp
+    if (t instanceof Date) return t.getTime();
+    return new Date(t).getTime();
   };
 
   // Combined messages for display, filtering duplicates
   const allMessages = [
     ...messages,
     ...pendingMessages.filter(pMsg =>
-      !messages.some(msg => msg.content === pMsg.content && msg.senderId === pMsg.senderId)
+      !messages.some(msg => msg.id === pMsg.id || (msg.message === pMsg.message && msg.senderId === pMsg.senderId))
     )
   ].sort((a, b) => {
-    return getTime(a.timestamp) - getTime(b.timestamp);
+    return getTime(a.sentAt || a.timestamp) - getTime(b.sentAt || b.timestamp);
   });
 
   // Scroll to bottom on innovative messages
@@ -112,29 +112,24 @@ const ChatContent = () => {
   useEffect(() => {
     if (!userId || !currentAdminId) return;
 
-    // Construct Conversation ID
-    let conversationId;
+    // Construct Conversation ID: postId (disputeId) + userId
+    // User requested: postId + userId
+    const postId = disputeId || "legacy";
+    const conversationId = `${postId}${userId}`;
 
-    if (disputeId) {
-      conversationId = disputeId;
-      // Ensure conversation document exists for dispute
-      const convoRef = doc(db, "conversations", conversationId);
-      // We don't await this to keep UI responsive, but we log errors
-      setDoc(convoRef, {
-        participants: [currentAdminId, userId],
-        type: 'dispute',
-        disputeId: disputeId,
-        updatedAt: Date.now() // Update timestamp to keep it fresh
-      }, { merge: true }).catch(err => console.error("Error creating/updating dispute conversation:", err));
-    } else {
-      const participants = [currentAdminId, userId].sort();
-      conversationId = participants.join("_");
-    }
+    // Ensure admin_chats document exists with correct fields
+    const chatRef = doc(db, "admin_chats", conversationId);
+    setDoc(chatRef, {
+      id: conversationId,
+      participants: [userId, currentAdminId],
+      createdAt: Date.now(),
+      updatedAt: Date.now()
+    }, { merge: true }).catch(err => console.error("Error creating/updating admin_chat document:", err));
 
-    // Listen to subcollection: conversations/{conversationId}/messages
+    // Listen to subcollection: admin_chats/{conversationId}/messages
     const q = query(
-      collection(db, "conversations", conversationId, "messages"),
-      orderBy("timestamp", "asc")
+      collection(db, "admin_chats", conversationId, "messages"),
+      orderBy("sentAt", "asc")
     );
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -215,17 +210,17 @@ const ChatContent = () => {
       messageType = "image";
     }
 
-    // Create optimistic message with unix seconds timestamp
-    const tempId = "temp-" + Date.now();
+    // Create optimistic message
+    const messageId = crypto.randomUUID();
     const optimisticMsg = {
-      id: tempId,
-      content: contentToUse || "",
+      id: messageId,
+      message: contentToUse || "",
       senderId: currentAdminId,
-      timestamp: Math.floor(Date.now() / 1000),
+      sentAt: Date.now(),
       type: messageType,
       pending: true,
       read: false,
-      imageUrl: imagePreviewUrl || null // Use local preview for optimistic UI
+      attachmentURL: imagePreviewUrl || null
     };
 
     setPendingMessages(prev => [...prev, optimisticMsg]);
@@ -253,7 +248,7 @@ const ChatContent = () => {
       });
 
       if (res.ok) {
-        setPendingMessages(prev => prev.filter(m => m.id !== tempId));
+        setPendingMessages(prev => prev.filter(m => m.id !== messageId));
       } else {
         console.error("Failed to send message");
       }
@@ -378,16 +373,16 @@ const ChatContent = () => {
                       } shadow-sm max-w-[650px] ${msg.pending ? 'opacity-70' : ''} overflow-hidden`}
                   >
                     {/* Image Display */}
-                    {msg.imageUrl && (
+                    {msg.attachmentURL && (
                       <div
                         className="cursor-pointer"
                         onClick={() => {
-                          setPreviewModalImage(msg.imageUrl);
+                          setPreviewModalImage(msg.attachmentURL);
                           setPreviewModalOpen(true);
                         }}
                       >
                         <img
-                          src={msg.imageUrl}
+                          src={msg.attachmentURL}
                           alt="Shared image"
                           className="max-w-[300px] max-h-[200px] object-cover rounded-t-[24px] hover:opacity-90 transition-opacity"
                         />
@@ -395,14 +390,14 @@ const ChatContent = () => {
                     )}
 
                     {/* Text Content */}
-                    {msg.content && msg.type !== "image" && (
+                    {msg.message && msg.type !== "image" && (
                       <div className={`px-5 py-3 text-[15px] leading-relaxed break-words whitespace-pre-wrap`}>
-                        {msg.content}
+                        {msg.message}
                       </div>
                     )}
 
                     {/* Image-only message padding */}
-                    {msg.type === "image" && !msg.content && (
+                    {msg.type === "image" && !msg.message && (
                       <div className="h-1"></div>
                     )}
                   </div>

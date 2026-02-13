@@ -121,7 +121,8 @@ export function DisputeDetailsDialog({ trigger, user: dispute }) {
 
   const handleChat = (user) => {
     if (!user.uid) return;
-    router.push(`/admin/chat?name=${encodeURIComponent(user.name || "User")}&id=${user.uid}&disputeId=${dispute.id}`);
+    const realPostId = proofData?.postID || dispute.challengeID || dispute.id;
+    router.push(`/admin/chat?name=${encodeURIComponent(user.name || "User")}&id=${user.uid}&disputeId=${realPostId}`);
   };
 
   const handleMediaClick = () => {

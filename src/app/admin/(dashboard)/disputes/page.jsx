@@ -26,6 +26,7 @@ async function getDisputes() {
       if (d.opponentId) userIds.add(d.opponentId);
       // Also check if challengedBy exists
       if (d.challengedBy) userIds.add(d.challengedBy);
+      if (d.nextUserID) userIds.add(d.nextUserID);
     });
 
     const userIdsArray = [...userIds].filter(Boolean);
@@ -51,7 +52,7 @@ async function getDisputes() {
       const submitter = userMap[dispute.submittedBy] || {};
 
       // Try to find opponent ID
-      const opponentId = dispute.challengedUserId || dispute.opponentId || dispute.challengedBy || null;
+      const opponentId = dispute.nextUserID || dispute.challengedUserId || dispute.opponentId || dispute.challengedBy || null;
       const opponent = opponentId ? (userMap[opponentId] || {}) : {};
 
       return {

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth";
 import { adminDb } from "@/lib/firebase-admin";
+import crypto from "crypto";
 
 export async function POST(request) {
     try {
@@ -29,54 +30,55 @@ export async function POST(request) {
             );
         }
 
-        // Build conversation ID
+        // Build conversation ID according to new requirements: postId + recipientId
         let conversationId;
-        const participants = [user.uid, recipientId].sort();
+        const postId = disputeId || "legacy";
+        conversationId = `${postId}${recipientId}`;
 
-        if (disputeId) {
-            conversationId = disputeId;
-        } else {
-            conversationId = participants.join("_");
-        }
-
-        // Unix seconds timestamp
+        // Unix seconds timestamp for messages
         const timestamp = Math.floor(Date.now() / 1000);
+        // JS timestamp (ms) for sentAt, createdAt, updatedAt as requested
+        const jsTimestamp = Date.now();
 
-        // Message data
+        // Save message to admin_chats/{conversationId}/messages
+        const messageCollection = adminDb
+            .collection("admin_chats")
+            .doc(conversationId)
+            .collection("messages");
+
+        const messageId = crypto.randomUUID();
+        const newMessageRef = messageCollection.doc(messageId);
+
+        // Message data according to new format
         const messageData = {
+            id: messageId,
+            message: content || "",
             senderId: user.uid,
-            content: content || "",
-            type,
-            timestamp,
+            sentAt: jsTimestamp,
             read: false,
+            type: type,
+            attachmentURL: imageUrl || null
         };
 
-        if (imageUrl) {
-            messageData.imageUrl = imageUrl;
-        }
+        await newMessageRef.set(messageData);
 
-        // Save message to conversations/{conversationId}/messages
-        const messageRef = await adminDb
-            .collection("conversations")
-            .doc(conversationId)
-            .collection("messages")
-            .add(messageData);
-
-        // Update conversation metadata
-        await adminDb.collection("conversations").doc(conversationId).set(
+        // Update/Set admin_chat document fields
+        await adminDb.collection("admin_chats").doc(conversationId).set(
             {
-                participants,
-                lastMessage: content || (imageUrl ? "📷 Image" : ""),
-                lastMessageTimestamp: timestamp,
+                id: conversationId,
+                participants: [recipientId, user.uid],
+                lastMessage: content || (imageUrl ? "📷 Attachment" : ""),
+                lastMessageTimestamp: jsTimestamp,
                 lastMessageSenderId: user.uid,
-                updatedAt: timestamp,
+                createdAt: jsTimestamp,
+                updatedAt: jsTimestamp,
             },
             { merge: true }
         );
 
         return NextResponse.json({
             success: true,
-            messageId: messageRef.id,
+            messageId: newMessageRef.id,
         });
     } catch (error) {
         console.error("Failed to send message:", error);
