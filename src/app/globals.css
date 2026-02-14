@@ -118,6 +118,33 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
+@keyframes store-flicker-pop {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  25% {
+    opacity: 0.92;
+    transform: scale(1.06);
+    filter: brightness(1.15);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  75% {
+    opacity: 0.96;
+    transform: scale(1.03);
+    filter: brightness(1.08);
+  }
+}
+
+.animate-store-flicker {
+  animation: store-flicker-pop 2.5s ease-in-out infinite;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
