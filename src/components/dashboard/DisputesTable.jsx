@@ -55,6 +55,19 @@ export function DisputesTable({ title = "All Disputes", data = defaultDisputes }
   const endIndex = startIndex + itemsPerPage;
   const currentDisputes = data.slice(startIndex, endIndex);
 
+  const formatDate = (value) => {
+    if (value == null) return "—";
+    // Unix timestamp (seconds or milliseconds)
+    const num = Number(value);
+    if (!Number.isFinite(num)) return String(value);
+    const ms = num < 1e12 ? num * 1000 : num;
+    return new Date(ms).toLocaleDateString("en-GB", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+  };
+
   const goToPage = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
@@ -118,7 +131,7 @@ export function DisputesTable({ title = "All Disputes", data = defaultDisputes }
                     {item.email}
                   </TableCell>
                   <TableCell className="py-6 px-8 text-sm text-[#D9D9D9] border-none">
-                    {item.submittedOn}
+                    {formatDate(item.createdAt ?? item.submittedOn)}
                   </TableCell>
                   <TableCell className="py-6 px-8 text-right border-none">
                     <DisputeDetailsDialog
