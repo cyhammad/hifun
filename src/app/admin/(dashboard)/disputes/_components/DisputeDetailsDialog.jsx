@@ -24,7 +24,7 @@ function MediaPreviewModal({ open, onClose, mediaUrl }) {
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[90vw] md:max-w-[80vw] lg:max-w-[70vw] max-h-[90vh] p-0 bg-black/95 border-white/10 overflow-hidden">
+      <DialogContent className="w-[95vw] sm:max-w-[90vw] md:max-w-[80vw] lg:max-w-[70vw] max-h-[90vh] p-0 bg-black/95 border-white/10 overflow-hidden">
         <DialogHeader>
           <DialogTitle className="hidden">Media Preview</DialogTitle>
           <DialogDescription className="hidden">Full size view of the submitted proof media.</DialogDescription>
@@ -137,7 +137,7 @@ export function DisputeDetailsDialog({ trigger, user: dispute }) {
         <DialogTrigger asChild>{trigger}</DialogTrigger>
         <DialogContent
           showCloseButton={false}
-          className="w-[418px] max-w-[418px] bg-[#191919] border-none rounded-[20px] p-[20px] gap-[6px] text-white overflow-hidden shadow-2xl"
+          className="w-[95%] sm:max-w-[418px] max-h-[95vh] overflow-y-auto bg-[#191919] border-none rounded-[20px] p-[20px] gap-[6px] text-white shadow-2xl"
           style={{ fontFamily: "var(--font-roboto), sans-serif" }}
         >
           <DialogHeader className="mb-2">

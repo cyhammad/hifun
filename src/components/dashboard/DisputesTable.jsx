@@ -99,7 +99,7 @@ export function DisputesTable({ title = "All Disputes", data = defaultDisputes }
         <h3 className="text-[24px] font-semibold text-white">{title}</h3>
       </div>
 
-      <div className="overflow-hidden rounded-[16px] border border-[#404040]">
+      <div className="overflow-x-auto rounded-[16px] border border-[#404040]">
         <Table className="border-collapse">
           <TableHeader>
             <TableRow className="bg-[#404040] hover:bg-[#404040]">
@@ -180,8 +180,8 @@ export function DisputesTable({ title = "All Disputes", data = defaultDisputes }
                   key={number}
                   onClick={() => goToPage(number)}
                   className={`min-w-[40px] h-[40px] rounded-[8px] text-sm font-medium transition-colors ${currentPage === number
-                      ? "bg-[#582BB3] text-white"
-                      : "text-[#D9D9D9] hover:bg-white/5"
+                    ? "bg-[#582BB3] text-white"
+                    : "text-[#D9D9D9] hover:bg-white/5"
                     }`}
                 >
                   {number}

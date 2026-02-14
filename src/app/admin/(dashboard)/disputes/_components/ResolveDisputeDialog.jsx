@@ -78,7 +78,7 @@ export function ResolveDisputeDialog({ trigger, dispute }) {
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent
         showCloseButton={false}
-        className="w-[418px] max-w-[418px] min-h-[311px] bg-[#191919] border-none rounded-[20px] p-[20px] gap-[10px] text-white overflow-hidden shadow-2xl flex flex-col"
+        className="w-[95%] sm:max-w-[418px] min-h-[311px] max-h-[95vh] overflow-y-auto bg-[#191919] border-none rounded-[20px] p-[20px] gap-[10px] text-white shadow-2xl flex flex-col"
         style={{ fontFamily: "var(--font-roboto), sans-serif" }}
       >
         <DialogHeader className="p-0 space-y-1">
