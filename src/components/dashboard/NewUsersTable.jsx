@@ -109,9 +109,6 @@ export function NewUsersTable({ title = "New Users", users = defaultUsers }) {
               <TableHead className="py-4 px-8 text-sm font-normal text-white h-auto">
                 Joined Date
               </TableHead>
-              <TableHead className="py-4 px-8 text-sm font-normal text-white h-auto rounded-tr-[12px] text-right">
-                Actions
-              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody className="bg-[#191919]">
@@ -129,11 +126,6 @@ export function NewUsersTable({ title = "New Users", users = defaultUsers }) {
                   </TableCell>
                   <TableCell className="py-6 px-8 text-sm text-[#D9D9D9] border-none">
                     {user.joinedDate}
-                  </TableCell>
-                  <TableCell className="py-6 px-8 text-right border-none">
-                    <button className="bg-[#582BB3] text-white px-8 py-2.5 rounded-[8px] text-sm font-medium hover:bg-[#7245f0] transition-colors">
-                      View
-                    </button>
                   </TableCell>
                 </TableRow>
               ))
