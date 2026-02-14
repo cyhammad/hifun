@@ -31,6 +31,32 @@ export async function POST(request) {
         // Update the dispute in Firestore
         await adminDb.collection("disputes").doc(disputeId).update(updateData);
 
+        // When resolved, also mark the related challenge as completed
+        if (status === "resolved") {
+            const disputeDoc = await adminDb.collection("disputes").doc(disputeId).get();
+            const disputeData = disputeDoc.data() || {};
+
+            let challengeId = disputeData.postID;
+            if (!challengeId) {
+                let proofDoc = await adminDb.collection("submitted_proofs").doc(disputeId).get();
+                if (!proofDoc.exists && disputeData.challengeID) {
+                    proofDoc = await adminDb.collection("submitted_proofs").doc(disputeData.challengeID).get();
+                }
+                if (proofDoc.exists) {
+                    const proofData = proofDoc.data() || {};
+                    challengeId = proofData.postID || disputeData.challengeID || disputeId;
+                }
+            }
+
+            if (challengeId) {
+                try {
+                    await adminDb.collection("challenges").doc(challengeId).update({ status: "completed" });
+                } catch (err) {
+                    console.warn("Could not update challenge status (challenge may not exist):", challengeId, err.message);
+                }
+            }
+        }
+
         return NextResponse.json({ success: true });
     } catch (error) {
         console.error("Error resolving dispute:", error);
