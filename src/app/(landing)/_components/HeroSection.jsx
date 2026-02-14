@@ -5,7 +5,7 @@ import Link from "next/link";
 
 const HeroSection = () => {
   return (
-    <div className="min-h-[600px] md:min-h-[900px] w-full h-full flex flex-col items-center justify-center relative overflow-hidden text-white">
+    <div className="min-h-[600px] md:min-h-[800px] w-full h-full flex flex-col items-center justify-center relative overflow-hidden text-white">
       {/* Background/Glow Effects */}
       <Image
         src="/main-bg.svg"
@@ -18,7 +18,7 @@ const HeroSection = () => {
       {/* Hero Section */}
       <section className="flex flex-col items-center text-center relative z-10 w-full h-full pt-28 md:pt-[107px]">
         {/* Logo */}
-        <div className="mb-10 md:mb-[113px]">
+        <div className="mb-10 md:mb-[93px]">
           <HeroLogo />
         </div>
 
