@@ -1,5 +1,5 @@
 import React from "react";
-import { DisputesTable } from "@/components/dashboard/DisputesTable";
+import { DisputesTabs } from "./_components/DisputesTabs";
 import { adminDb } from "@/lib/firebase-admin";
 
 // Fetch disputes and join with user data
@@ -97,7 +97,7 @@ const DisputesPage = async () => {
       </div>
 
       <div className="w-full flex justify-start">
-        <DisputesTable data={disputesData} />
+        <DisputesTabs disputesData={disputesData} />
       </div>
     </div>
   );
