@@ -1,7 +1,6 @@
 import React from "react";
 import KPICard from "@/components/dashboard/KPICard";
 import { NewUsersTable } from "@/components/dashboard/NewUsersTable";
-import { TotalUsersIcon, TotalProfitsIcon } from "@/components/icons/icons";
 import { adminDb } from "@/lib/firebase-admin";
 
 // Helper to format timestamp
@@ -72,9 +71,10 @@ const DashboardPage = async () => {
           <KPICard
             title="Total Users"
             value={`${totalUsers}+`}
-            percentage="+ 20%" // Placeholder until we have historical data logic
-            customIcon={<TotalUsersIcon className="w-[24px] h-[24px] text-white" />}
+            percentage="+ 20%"
+            icon="totalUsers"
             iconBgColor="bg-[#582BB3]"
+            iconColor="text-white"
           />
         </div>
         <div className="flex-1 min-w-[300px]">
@@ -82,8 +82,9 @@ const DashboardPage = async () => {
             title="Total Profits"
             value="$500+"
             percentage="+ 20%"
-            customIcon={<TotalProfitsIcon className="w-[24px] h-[24px] text-white" />}
+            icon="totalProfits"
             iconBgColor="bg-[#582BB3]"
+            iconColor="text-white"
           />
         </div>
       </div>

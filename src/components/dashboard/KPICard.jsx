@@ -1,16 +1,24 @@
 "use client";
 
 import React from "react";
+import { TotalUsersIcon, TotalProfitsIcon } from "@/components/icons/icons";
+
+const ICON_MAP = {
+  totalUsers: TotalUsersIcon,
+  totalProfits: TotalProfitsIcon,
+};
 
 const KPICard = ({
   title,
   value,
   percentage,
-  icon: Icon,
+  icon,
   iconBgColor = "bg-[#582BB3]",
   iconColor = "text-white",
   customIcon,
 }) => {
+  const Icon = typeof icon === "string" ? ICON_MAP[icon] : icon;
+
   return (
     <div className="bg-[#080707] w-full h-[135px] rounded-[16px] p-[16px] flex flex-col justify-between border-[1.5px] border-[#404040] font-sans">
       <div className="flex items-start justify-between">

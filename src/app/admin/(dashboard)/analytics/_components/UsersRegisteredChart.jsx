@@ -9,19 +9,19 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 
-const chartData = [
-  { month: "Jan", users: 300 },
-  { month: "Feb", users: 400 },
-  { month: "Mar", users: 80 },
-  { month: "Apr", users: 250 },
-  { month: "May", users: 280 },
-  { month: "Jun", users: 180 },
-  { month: "Jul", users: 300 },
-  { month: "Aug", users: 190 },
-  { month: "Sept", users: 80 },
-  { month: "Oct", users: 250 },
-  { month: "Nov", users: 400 },
-  { month: "Dec", users: 80 },
+const defaultChartData = [
+  { month: "Jan", users: 0 },
+  { month: "Feb", users: 0 },
+  { month: "Mar", users: 0 },
+  { month: "Apr", users: 0 },
+  { month: "May", users: 0 },
+  { month: "Jun", users: 0 },
+  { month: "Jul", users: 0 },
+  { month: "Aug", users: 0 },
+  { month: "Sept", users: 0 },
+  { month: "Oct", users: 0 },
+  { month: "Nov", users: 0 },
+  { month: "Dec", users: 0 },
 ];
 
 const chartConfig = {
@@ -31,7 +31,10 @@ const chartConfig = {
   },
 };
 
-export function UsersRegisteredChart() {
+export function UsersRegisteredChart({ data = defaultChartData }) {
+  const chartData = data?.length ? data : defaultChartData;
+  const maxUsers = Math.max(...chartData.map((d) => d.users), 1);
+
   return (
     <div className="w-full rounded-[12px] pt-[20px] pr-[24px] pb-[24px] pl-[24px] border border-[#404040] shadow-2xl flex flex-col gap-[16px] font-sans">
       <div className="flex flex-col">
@@ -64,8 +67,7 @@ export function UsersRegisteredChart() {
               axisLine={false}
               tickMargin={12}
               tick={{ fill: "#717171", fontSize: 12, fontWeight: 300 }}
-              domain={[0, 450]}
-              ticks={[10, 100, 200, 300, 400]}
+              domain={[0, Math.ceil(maxUsers * 1.2) || 10]}
             />
             <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
             <Bar

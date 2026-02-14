@@ -6,22 +6,22 @@ import Image from "next/image";
 const topUsers = [
   {
     rank: 2,
-    username: "@craig_love",
-    challenges: 23,
-    avatar: "/user-3.png",
+    username: "Haider",
+    challenges: 7,
+    avatar: "",
   },
   {
     rank: 1,
-    username: "@craig_love",
-    challenges: 44,
-    avatar: "/user-1.png",
+    username: "Faiq Asif",
+    challenges: 10,
+    avatar: "",
     active: true,
   },
   {
     rank: 3,
-    username: "@craig_love",
-    challenges: 14,
-    avatar: "/user-2.png",
+    username: "Asad",
+    challenges: 5,
+    avatar: "",
   },
 ];
 
@@ -38,12 +38,20 @@ export function TopUsersCard() {
           style={{ background: "linear-gradient(180deg, #080707 0%, rgba(179, 125, 43, 0.1) 100%)" }}
         >
           <div className="w-[70px] h-[70px] rounded-full border-[3px] border-[#582BB3] overflow-hidden relative shadow-[0_0_15px_rgba(88,43,179,0.3)] z-10 bg-black">
-            <Image
-              src={topUsers[0].avatar}
-              alt="User"
-              fill
-              className="object-cover"
-            />
+            {topUsers[0].avatar ? (
+              <Image
+                src={topUsers[0].avatar}
+                alt="User"
+                fill
+                className="object-cover"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center bg-primary">
+                <span className="text-white text-[24px] font-bold select-none">
+                  {topUsers[0].username.charAt(0)}
+                </span>
+              </div>
+            )}
           </div>
           <div className="flex flex-col items-center gap-1 mb-2">
             <span className="text-white text-[14px]">
@@ -73,13 +81,21 @@ export function TopUsersCard() {
               <Image src="/crown.png" alt="Crown" fill className="object-contain" />
             </div>
 
-            <div className="w-[86px] h-[86px] rounded-full border-[4px] border-[#FFBD1D] overflow-hidden relative shadow-[0_0_20px_rgba(255,189,29,0.4)] z-10 bg-black">
-              <Image
-                src={topUsers[1].avatar}
-                alt="User"
-                fill
-                className="object-cover"
-              />
+            <div className="w-[86px] h-[86px] rounded-full border-4 border-[#FFBD1D] overflow-hidden relative shadow-[0_0_20px_rgba(255,189,29,0.4)] z-10 bg-black">
+              {topUsers[1].avatar ? (
+                <Image
+                  src={topUsers[1].avatar}
+                  alt="User"
+                  fill
+                  className="object-cover"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-primary">
+                  <span className="text-white text-[24px] font-bold select-none">
+                    {topUsers[1].username.charAt(0)}
+                  </span>
+                </div>
+              )}
             </div>
           </div>
 
@@ -103,12 +119,20 @@ export function TopUsersCard() {
           style={{ background: "linear-gradient(180deg, #080707 0%, rgba(179, 125, 43, 0.1) 100%)" }}
         >
           <div className="w-[50px] h-[50px] rounded-full border-[2px] border-[#404040] overflow-hidden relative shadow-[0_0_10px_rgba(64,64,64,0.2)] z-10 bg-black opacity-90">
-            <Image
+            {topUsers[2].avatar ? (
+              <Image
               src={topUsers[2].avatar}
               alt="User"
               fill
               className="object-cover"
             />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center bg-primary">
+                <span className="text-white text-[24px] font-bold select-none">
+                  {topUsers[2].username.charAt(0)}
+                </span>
+              </div>
+            )}
           </div>
           <div className="flex flex-col items-center gap-1 mb-2">
             <span className="text-white text-[13px]">
