@@ -46,22 +46,34 @@ const HeroSection = () => {
             with others, and share your results.
           </p>
         </div>
-        <div className="flex gap-8 pt-20">
+        <div className="flex flex-col sm:flex-row gap-6 md:gap-10 pt-16 md:pt-24 items-center">
           <Link
             href="https://apps.apple.com/us/app/hi-fun/id6743761192"
             target="_blank"
-            className="animate-store-flicker block transition-transform hover:scale-110"
+            className="animate-store-flicker block transition-transform hover:scale-105 active:scale-95"
             style={{ animationDelay: "0s" }}
           >
-            <Image src="/apple.png" width={150} height={100} alt="App Store" />
+            <Image
+              src="/apple.png"
+              width={200}
+              height={60}
+              alt="App Store"
+              className="h-[50px] md:h-[64px] w-auto object-contain"
+            />
           </Link>
           <Link
             href="https://play.google.com/store/apps/details?id=com.hi.fun"
             target="_blank"
-            className="animate-store-flicker block transition-transform hover:scale-110"
+            className="animate-store-flicker block transition-transform hover:scale-105 active:scale-95"
             style={{ animationDelay: "0.4s" }}
           >
-            <Image src="/google.png" width={150} height={100} alt="Google Play" />
+            <Image
+              src="/google.png"
+              width={200}
+              height={60}
+              alt="Google Play"
+              className="h-[50px] md:h-[64px] w-auto object-contain"
+            />
           </Link>
         </div>
       </section>
