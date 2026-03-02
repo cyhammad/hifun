@@ -18,8 +18,8 @@ const HeroSection = () => {
       {/* Hero Section */}
       <section className="flex flex-col items-center text-center relative z-10 w-full h-full pt-28 md:pt-[107px]">
         {/* Logo */}
-        <div className="mb-10 md:mb-[93px]">
-          <HeroLogo />
+        <div className="mb-8 md:mb-14">
+          <Image src="/logo.png" width={250} height={58} alt="Logo" className="w-40 md:w-72 h-auto" />
         </div>
 
         {/* Badge */}
@@ -35,10 +35,11 @@ const HeroSection = () => {
 
         <div className="container mx-auto max-w-5xl">
           <h2 className="text-4xl md:text-7xl lg:text-8xl font-semibold mb-8 font-roboto">
-            <span className="text-white block">Discover. Join.</span>
+            <span className="text-white block">Join Us</span>
             <span className="bg-[linear-gradient(97.93deg,#FFB300_0%,#7B5EED_100%)] text-transparent bg-clip-text">
-              Complete Challenges.
+              Complete Challenges
             </span>
+            <span className="text-white block">Get Cash</span>
           </h2>
 
           <p className="font-inter text-lg md:text-xl text-slate-400 max-w-xl mx-auto font-light leading-relaxed">

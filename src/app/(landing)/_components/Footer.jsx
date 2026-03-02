@@ -15,7 +15,7 @@ const Footer = () => {
         className="absolute top-0 left-0 w-full h-full object-cover"
       />
       <div className="flex flex-col items-center gap-6 md:gap-8 justify-center text-center z-10 px-6 -mt-20">
-        <HeroLogo />
+        <Image src="/logo.png" width={250} height={58} alt="Logo" className="w-40 md:w-72 h-auto" />
         <h2 className="text-3xl md:text-5xl xl:text-[72px] font-bold font-[family-name:var(--font-roboto)]">
           <span className="text-white block mb-2">Ready to accept</span>
           <span className="bg-gradient-to-br from-[#BB877B] from-50% to-[#7B5EED] text-transparent bg-clip-text">
