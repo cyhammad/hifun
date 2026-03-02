@@ -28,13 +28,13 @@ const TrophySticker = ({ className = "" }) => (
     </svg>
   </StickerWrapper>
 );
-const StarSticker = ({ className = "" }) => (
-  <StickerWrapper rotate="-5deg" delay="1s" className={className}>
-    <svg viewBox="0 0 24 24" fill="none" className="w-9 h-9 md:w-11 md:h-11" stroke="#FFB300" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M12 2l3 7h7l-5.5 4 2 7-6.5-4.5L5.5 20l2-7L2 9h7l3-7z" />
-    </svg>
-  </StickerWrapper>
-);
+// const StarSticker = ({ className = "" }) => (
+//   <StickerWrapper rotate="-5deg" delay="1s" className={className}>
+//     <svg viewBox="0 0 24 24" fill="none" className="w-9 h-9 md:w-11 md:h-11" stroke="#FFB300" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+//       <path d="M12 2l3 7h7l-5.5 4 2 7-6.5-4.5L5.5 20l2-7L2 9h7l3-7z" />
+//     </svg>
+//   </StickerWrapper>
+// );
 
 const HeroSection = () => {
   return (
@@ -42,7 +42,7 @@ const HeroSection = () => {
       {/* Stickers */}
       <CashSticker className="top-[18%] left-[8%] md:left-[12%]" />
       <TrophySticker className="top-[22%] right-[6%] md:right-[10%]" />
-      <StarSticker className="bottom-[32%] left-[5%] md:left-[8%]" />
+      {/* <StarSticker className="bottom-[32%] left-[5%] md:left-[8%]" /> */}
       <CashSticker className="bottom-[28%] right-[7%] md:right-[12%]" />
       {/* Background/Glow Effects */}
       <Image
