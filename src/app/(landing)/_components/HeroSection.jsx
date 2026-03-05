@@ -3,47 +3,9 @@ import { HeroLogo, BadgeSparkles } from "./LandingIcons";
 import Image from "next/image";
 import Link from "next/link";
 
-// Floating decorative icons (cash, trophy, star) – no border/box
-const StickerWrapper = ({ children, rotate, delay = "0s", className = "" }) => (
-  <div className={`absolute flex items-center justify-center ${className}`} style={{ transform: `rotate(${rotate})` }}>
-    <div className="animate-float flex items-center justify-center" style={{ animationDelay: delay }}>
-      {children}
-    </div>
-  </div>
-);
-const CashSticker = ({ className = "" }) => (
-  <StickerWrapper rotate="-8deg" className={className}>
-    <svg viewBox="0 0 24 24" fill="none" className="w-10 h-10 md:w-12 md:h-12" stroke="#FFB300" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-    </svg>
-  </StickerWrapper>
-);
-const TrophySticker = ({ className = "" }) => (
-  <StickerWrapper rotate="6deg" delay="0.5s" className={className}>
-    <svg viewBox="0 0 24 24" fill="none" className="w-10 h-10 md:w-12 md:h-12" stroke="#7B5EED" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M8 21h8M12 17v4M7 4h10v4a5 5 0 0 1-10 0V4z" />
-      <path d="M7 4V2h10v2M7 8a5 5 0 0 0 10 0" />
-      <path d="M12 8v4M9 12h6" />
-      <path d="M6 12H4a2 2 0 0 1-2-2V8h2v2a2 2 0 0 0 2 2zM18 12h2a2 2 0 0 0 2-2V8h-2v2a2 2 0 0 1-2 2z" />
-    </svg>
-  </StickerWrapper>
-);
-// const StarSticker = ({ className = "" }) => (
-//   <StickerWrapper rotate="-5deg" delay="1s" className={className}>
-//     <svg viewBox="0 0 24 24" fill="none" className="w-9 h-9 md:w-11 md:h-11" stroke="#FFB300" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-//       <path d="M12 2l3 7h7l-5.5 4 2 7-6.5-4.5L5.5 20l2-7L2 9h7l3-7z" />
-//     </svg>
-//   </StickerWrapper>
-// );
-
 const HeroSection = () => {
   return (
     <div className="min-h-[600px] md:min-h-[800px] w-full h-full flex flex-col items-center justify-center relative overflow-hidden text-white">
-      {/* Stickers */}
-      <CashSticker className="top-[18%] left-[8%] md:left-[12%]" />
-      <TrophySticker className="top-[22%] right-[6%] md:right-[10%]" />
-      {/* <StarSticker className="bottom-[32%] left-[5%] md:left-[8%]" /> */}
-      <CashSticker className="bottom-[28%] right-[7%] md:right-[12%]" />
       {/* Background/Glow Effects */}
       <Image
         src="/main-bg.svg"
